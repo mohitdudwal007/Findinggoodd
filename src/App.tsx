@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Download, Star, Search, Menu, Play, X, Trash2, Plus, LogOut, Edit } from 'lucide-react';
+import { Download, Star, Search, Menu, Play, X, Trash2, Plus, LogOut, Edit, MessageSquare, FileText, Sliders, BarChart2, ShieldAlert, Check, HelpCircle } from 'lucide-react';
 import { auth, db } from './firebase';
 import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import { collection, onSnapshot, doc, setDoc, deleteDoc, serverTimestamp, getDocFromServer, query, orderBy, increment } from 'firebase/firestore';
@@ -690,52 +690,103 @@ const AdminLogin = ({ onLogin, onClose }: { onLogin: () => void, onClose: () => 
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
       transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[100] bg-[#050505]/95 backdrop-blur-md flex items-center justify-center p-6"
+      className="fixed inset-0 z-[100] bg-[#030306]/98 backdrop-blur-2xl flex items-center justify-center p-6"
     >
-      <button onClick={onClose} className="absolute top-8 right-12 text-white/50 hover:text-white transition-colors duration-300">
-        <X size={24} />
+      <button 
+        onClick={onClose} 
+        className="absolute top-6 right-6 md:top-8 md:right-12 text-white/50 hover:text-white transition-all duration-300 w-11 h-11 rounded-full flex items-center justify-center bg-white/[0.03] hover:bg-white/[0.08] border border-white/5 cursor-pointer active:scale-95"
+      >
+        <X size={20} />
       </button>
 
       <motion.div 
-        initial={{ y: 20, opacity: 0, scale: 0.95 }}
+        initial={{ y: 30, opacity: 0, scale: 0.96 }}
         animate={{ y: 0, opacity: 1, scale: 1 }}
-        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md bg-[#111] border border-white/5 p-8 shadow-2xl relative overflow-hidden"
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-md bg-[#0c0d12]/90 border border-white/[0.08] p-10 rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.8)] relative overflow-hidden"
       >
-        <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
-          <Menu size={120} />
+        {/* Top interactive dual Google & Gemini decorative lights bar */}
+        <div className="absolute top-0 inset-x-0 h-[3px] bg-gradient-to-r from-[#4285F4] via-[#EA4335] via-[#FBBC05] via-[#34A853] via-[#9B72F3] to-[#22D3EE] z-20"></div>
+        
+        {/* Subtle circular ambient glow in login card */}
+        <div className="absolute top-[-30%] right-[-20%] w-[160px] h-[160px] bg-indigo-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+        <div className="absolute bottom-[-30%] left-[-20%] w-[160px] h-[160px] bg-cyan-500/10 rounded-full blur-[40px] pointer-events-none"></div>
+
+        <div className="flex flex-col items-center mb-8 text-center relative z-10 select-none">
+          {/* Official Google Gemini Sparkle Branding */}
+          <div className="w-12 h-12 bg-white/[0.03] rounded-2xl flex items-center justify-center border border-white/10 mb-4 shadow-inner relative group">
+            <svg className="w-8 h-8 group-hover:scale-110 transition-transform duration-300" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C12 2 13.5 8 16.5 9.5C19.5 11 22 11 22 11C22 11 19.5 11 16.5 12.5C13.5 14 12 20 12 20C12 20 10.5 14 7.5 12.5C4.5 11 2 11 2 11C2 11 4.5 11 7.5 9.5C10.5 8 12 2 12 2Z" fill="url(#geminiLoginLogoGradient)" />
+              <defs>
+                <linearGradient id="geminiLoginLogoGradient" x1="2" y1="2" x2="22" y2="20" gradientUnits="userSpaceOnUse">
+                  <stop offset="0%" stopColor="#4285F4" />
+                  <stop offset="35%" stopColor="#9B72F3" />
+                  <stop offset="70%" stopColor="#D96570" />
+                  <stop offset="100%" stopColor="#F59E0B" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 to-cyan-500/5 rounded-2xl blur-sm -z-10 animate-pulse"></span>
+          </div>
+          
+          <h2 className="text-2xl font-display font-black tracking-tight text-white uppercase sm:text-3xl">Google Cloud</h2>
+          <p className="text-white/40 text-[10px] tracking-[0.2em] font-black uppercase mt-1">Console Gatekeeper</p>
         </div>
         
-        <h2 className="text-2xl font-display font-black tracking-tighter uppercase mb-8 relative z-10">Admin Access</h2>
-        
-        <form onSubmit={handleSubmit} className="flex flex-col gap-6 relative z-10">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-5 relative z-10">
           <div>
-            <label className="text-[10px] tracking-widest uppercase font-bold text-white/40 block mb-2">ID (Email)</label>
-            <input 
-              type="email" 
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-sm text-white outline-none focus:border-white/40 transition-colors"
-              required 
-            />
-          </div>
-          <div>
-            <label className="text-[10px] tracking-widest uppercase font-bold text-white/40 block mb-2">Password</label>
-            <input 
-              type="password" 
-              value={password}
-              onChange={e => setPassword(e.target.value)}
-              className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-sm text-white outline-none focus:border-white/40 transition-colors"
-              required 
-            />
+            <label className="text-[10px] tracking-widest uppercase font-bold text-white/40 block mb-2 font-sans pl-1">Admin ID (Email Address)</label>
+            <div className="relative">
+              <input 
+                type="email" 
+                value={email}
+                onChange={e => setEmail(e.target.value)}
+                placeholder="developer@google.workspace"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-3 px-5 text-sm text-white placeholder:text-white/10 outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all duration-300 font-sans tracking-wide"
+                required 
+              />
+            </div>
           </div>
           
-          {error && <div className="text-red-500 text-[10px] font-bold uppercase tracking-widest">{error}</div>}
+          <div>
+            <label className="text-[10px] tracking-widest uppercase font-bold text-white/40 block mb-2 font-sans pl-1">Sign-In Password</label>
+            <div className="relative">
+              <input 
+                type="password" 
+                value={password}
+                onChange={e => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-3 px-5 text-sm text-white placeholder:text-white/20 outline-none focus:border-[#a855f7]/60 focus:bg-white/[0.04] transition-all duration-300 font-sans tracking-wide"
+                required 
+              />
+            </div>
+          </div>
           
-          <button type="submit" className="mt-4 px-6 py-4 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all text-center">
-            Authenticate
+          {error && (
+            <motion.div 
+              initial={{ opacity: 0, y: -5 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              className="text-red-400 text-[10px] font-bold uppercase tracking-widest bg-red-500/10 border border-red-500/20 py-2.5 px-4 rounded-full text-center mt-1"
+            >
+              ⚠ {error}
+            </motion.div>
+          )}
+          
+          <button 
+            type="submit" 
+            className="mt-4 py-3.5 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] hover:from-[#3572df] hover:to-[#875de2] text-white font-extrabold uppercase text-xs tracking-widest transition-all duration-300 text-center rounded-full hover:scale-[1.02] active:scale-[0.98] cursor-pointer shadow-[0_4px_25px_rgba(66,133,244,0.25)] flex items-center justify-center gap-1.5"
+          >
+            Authenticate Now
           </button>
         </form>
+        
+        {/* Minimal Google Secure Lock notice */}
+        <div className="text-[9px] text-white/20 text-center mt-6 select-none uppercase tracking-widest font-semibold flex items-center justify-center gap-1">
+          <svg className="w-3 h-3 text-[#34A853]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+          </svg>
+          Google Identity Secure Workspace Protocol
+        </div>
       </motion.div>
     </motion.div>
   );
@@ -967,190 +1018,361 @@ const AdminDashboard = ({
       animate={{ opacity: 1 }} 
       exit={{ opacity: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed inset-0 z-[100] bg-[#050505] overflow-y-auto"
+      className="fixed inset-0 z-[100] bg-[#05060b] text-[#e0e1e8] overflow-y-auto"
     >
-      <nav className="sticky top-0 z-50 px-6 lg:px-12 py-6 flex flex-col lg:flex-row lg:items-center justify-between border-b border-white/5 bg-[#050505]/80 backdrop-blur-md gap-6 lg:gap-4">
-        <div className="text-2xl font-display font-black tracking-tighter uppercase flex items-center justify-between w-full lg:w-auto">
-          <div>{siteName} <span className="text-white/30 text-sm hidden sm:inline">| ADMIN</span></div>
-          <div className="flex gap-4 lg:hidden">
-            <button onClick={onLogout} className="text-white/50 hover:text-white">
-              <LogOut size={20} />
+      <nav className="sticky top-0 z-50 px-6 lg:px-12 py-5 flex flex-col xl:flex-row xl:items-center justify-between border-b border-white/[0.06] bg-[#05060b]/80 backdrop-blur-3xl gap-6 xl:gap-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)]">
+        <div className="text-xl md:text-2xl font-display font-black tracking-tight uppercase flex items-center justify-between w-full xl:w-auto">
+          <div className="flex items-center gap-2.5">
+            {/* Google-colored dual neon circle */}
+            <span className="relative flex h-3.5 w-3.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4285F4] opacity-50"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-gradient-to-r from-[#4285F4] via-[#9B72F3] to-[#22D3EE] shadow-[0_0_10px_rgba(155,114,243,0.5)]"></span>
+            </span>
+            <span className="text-white font-extrabold tracking-tight">{siteName}</span> 
+            <span className="text-white/20 text-xs font-mono tracking-widest lowercase border border-white/10 px-2 py-0.5 rounded-full bg-white/[0.02]">console</span>
+          </div>
+          <div className="flex gap-4 xl:hidden">
+            <button 
+              onClick={onLogout} 
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/[0.03] border border-white/5 text-white/60 hover:text-white transition-colors cursor-pointer"
+            >
+              <LogOut size={16} />
             </button>
-            <button onClick={onClose} className="text-white/50 hover:text-white">
-              <X size={20} />
+            <button 
+              onClick={onClose} 
+              className="w-10 h-10 rounded-full flex items-center justify-center bg-white/[0.03] border border-white/5 text-white/60 hover:text-white transition-colors cursor-pointer"
+            >
+              <X size={16} />
             </button>
           </div>
         </div>
         
-        <div className="flex bg-[#111] border border-white/10 rounded-sm overflow-x-auto text-[10px] w-full lg:w-auto order-last lg:order-none snap-x">
-          <button onClick={() => setActiveTab('movies')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'movies' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Movies</button>
-          <button onClick={() => setActiveTab('requests')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'requests' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Requests</button>
-          <button onClick={() => setActiveTab('pages')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'pages' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Terms</button>
-          <button onClick={() => setActiveTab('ads')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'ads' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Ad Banner</button>
-          <button onClick={() => setActiveTab('settings')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'settings' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Settings</button>
-          <button onClick={() => setActiveTab('analytics')} className={`flex-1 lg:flex-none px-4 py-3 uppercase font-bold tracking-widest whitespace-nowrap snap-center ${activeTab === 'analytics' ? 'bg-white text-black' : 'text-white/50 hover:bg-white/5'}`}>Analytics</button>
+        <div className="flex bg-white/[0.02] border border-white/[0.08] p-1.5 rounded-full overflow-x-auto text-xs w-full xl:w-auto order-last xl:order-none snap-x scrollbar-none gap-1">
+          {[
+            { id: 'movies', label: 'Library', icon: Play },
+            { id: 'requests', label: 'Requests', icon: MessageSquare },
+            { id: 'pages', label: 'Policy Terms', icon: FileText },
+            { id: 'ads', label: 'Promotions', icon: Sliders },
+            { id: 'settings', label: 'Preferences', icon: Sliders },
+            { id: 'analytics', label: 'Insights', icon: BarChart2 }
+          ].map(tab => {
+            const Icon = tab.icon;
+            const isActive = activeTab === tab.id;
+            return (
+              <button 
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id as any)} 
+                className={`px-5 py-2.5 rounded-full font-bold tracking-wider snap-center flex items-center gap-2 transition-all cursor-pointer whitespace-nowrap text-[11px] uppercase ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-[#4285F4] to-[#9B72F3] text-white shadow-lg shadow-indigo-500/10 scale-102' 
+                    : 'text-white/50 hover:bg-white/[0.04] hover:text-white/80'
+                }`}
+              >
+                <Icon size={12} className={isActive ? "text-white" : "text-white/40"} />
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="hidden lg:flex gap-6">
-          <button onClick={onLogout} className="text-[10px] tracking-widest uppercase font-bold text-white/50 hover:text-white flex items-center gap-2">
-            <LogOut size={14} /> Logout
+        <div className="hidden xl:flex gap-4">
+          <button 
+            onClick={onLogout} 
+            className="px-5 py-3 transition-all duration-300 bg-white/[0.02] text-white/60 hover:text-white border border-white/5 hover:bg-white/[0.06] rounded-full text-[10px] tracking-widest uppercase font-black flex items-center gap-2 cursor-pointer active:scale-95"
+          >
+            <LogOut size={13} strokeWidth={2.5} /> Sign-Out
           </button>
-          <button onClick={onClose} className="text-[10px] tracking-widest uppercase font-bold text-white/50 hover:text-white flex items-center gap-2">
-             <X size={14} /> Close
+          <button 
+            onClick={onClose} 
+            className="px-5 py-3 transition-all duration-300 bg-[#4285F4]/10 text-[#4285F4] hover:bg-[#4285F4]/20 border border-[#4285F4]/20 rounded-full text-[10px] tracking-widest uppercase font-black flex items-center gap-2 cursor-pointer active:scale-95 shadow-[0_2px_15px_rgba(66,133,244,0.15)]"
+          >
+            <X size={13} strokeWidth={2.5} /> Exit Panel
           </button>
         </div>
       </nav>
 
       {activeTab === 'movies' && (
-        <div className="px-12 py-12 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-3 gap-10">
           {/* ADD MOVIE FORM */}
           <div className="lg:col-span-1">
-          <div className="bg-[#111] border border-white/5 p-8 shadow-2xl lg:sticky lg:top-32">
-            <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">
-              {editingId ? 'Edit Title' : 'Add New Title'}
-            </h3>
-            <form onSubmit={handleAddOrUpdate} className="flex flex-col gap-4">
-              <div className="flex gap-2">
-                <input placeholder="Title" required value={newMovie.title} onChange={e => setNewMovie({...newMovie, title: e.target.value})} className="flex-1 bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-                <button type="button" onClick={handleAutoFill} disabled={isFetchingDetails} className="bg-white text-black px-4 font-bold uppercase tracking-widest text-[10px] hover:bg-white/90 disabled:opacity-50 transition-colors whitespace-nowrap">
-                  {isFetchingDetails ? 'Fetching...' : 'Auto-Fill 🪄'}
+            <div className="bg-[#0c0d13]/95 border border-white/[0.08] p-8 rounded-[2rem] shadow-[0_15px_40px_rgba(0,0,0,0.6)] lg:sticky lg:top-32 backdrop-blur-3xl overflow-hidden relative">
+              <div className="absolute top-0 left-0 w-1.5 h-12 bg-gradient-to-b from-[#4285F4] to-[#9B72F3]"></div>
+              
+              <h3 className="text-base font-display font-black uppercase tracking-tight text-white mb-6 border-b border-white/[0.06] pb-4 flex items-center gap-2">
+                <Plus size={16} className="text-[#4285F4]" />
+                {editingId ? 'Modify Release' : 'Publish Title'}
+              </h3>
+              
+              <form onSubmit={handleAddOrUpdate} className="flex flex-col gap-4 relative z-10">
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Movie Title</label>
+                  <div className="flex gap-2">
+                    <input 
+                      placeholder="Ex. Interstellar" 
+                      required 
+                      value={newMovie.title} 
+                      onChange={e => setNewMovie({...newMovie, title: e.target.value})} 
+                      className="flex-1 bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                    />
+                    <button 
+                      type="button" 
+                      onClick={handleAutoFill} 
+                      disabled={isFetchingDetails} 
+                      className="bg-gradient-to-r from-[#4285F4] to-[#9B72F3] text-white px-4 rounded-full font-black uppercase tracking-widest text-[9px] hover:scale-[1.03] transition-all disabled:opacity-50 whitespace-nowrap cursor-pointer hover:shadow-[0_0_15px_rgba(155,114,243,0.3)]"
+                    >
+                      {isFetchingDetails ? 'Fetching...' : 'OMDb 🪄'}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Year</label>
+                    <input 
+                      placeholder="Ex. 2014" 
+                      required 
+                      value={newMovie.year} 
+                      onChange={e => setNewMovie({...newMovie, year: e.target.value})} 
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Rating</label>
+                    <input 
+                      placeholder="Ex. 8.6" 
+                      required 
+                      type="number" 
+                      step="0.1" 
+                      value={newMovie.rating} 
+                      onChange={e => setNewMovie({...newMovie, rating: e.target.value})} 
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Poster Image Link</label>
+                  <input 
+                    placeholder="https://image-link.com/photo.jpg" 
+                    required 
+                    value={newMovie.poster} 
+                    onChange={e => setNewMovie({...newMovie, poster: e.target.value})} 
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Genre</label>
+                    <input 
+                      placeholder="Ex. Sci-Fi, Drama" 
+                      required 
+                      value={newMovie.genre} 
+                      onChange={e => setNewMovie({...newMovie, genre: e.target.value})} 
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">File Size</label>
+                    <input 
+                      placeholder="Ex. 2.1 GB" 
+                      required 
+                      value={newMovie.size} 
+                      onChange={e => setNewMovie({...newMovie, size: e.target.value})} 
+                      className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Direct Stream Link</label>
+                  <input 
+                    placeholder="Direct Server URL or https://" 
+                    value={newMovie.downloadLink} 
+                    onChange={e => setNewMovie({...newMovie, downloadLink: e.target.value})} 
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                  />
+                </div>
+
+                <div className="flex flex-col gap-1">
+                  <label className="text-[9px] uppercase tracking-widest font-black text-white/30 pl-2">Interactive Player URL (IFrame)</label>
+                  <input 
+                    placeholder="Embedding server player player URL" 
+                    value={newMovie.watchLink} 
+                    onChange={e => setNewMovie({...newMovie, watchLink: e.target.value})} 
+                    className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                  />
+                </div>
+                
+                <div className="flex items-center gap-3 bg-white/[0.02] hover:bg-white/[0.04] border border-white/10 p-3.5 rounded-2xl select-none transition-colors cursor-pointer mt-1">
+                  <input 
+                    type="checkbox" 
+                    id="isTrending" 
+                    checked={newMovie.isTrending} 
+                    onChange={e => setNewMovie({...newMovie, isTrending: e.target.checked})} 
+                    className="w-4 h-4 rounded border-white/10 bg-[#050505] text-[#4285F4] focus:ring-0 accent-[#4285F4]" 
+                  />
+                  <label htmlFor="isTrending" className="text-[10px] text-white/70 font-black tracking-widest cursor-pointer uppercase select-none">
+                    Mark as Trending 🔥
+                  </label>
+                </div>
+                
+                <button 
+                  type="submit" 
+                  className="mt-2 py-3.5 bg-white text-black font-extrabold uppercase text-[10px] tracking-widest hover:bg-slate-200 transition-all rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-95 shadow-[0_4px_20px_rgba(255,255,255,0.08)]"
+                >
+                  {editingId ? (
+                    <>
+                      <Edit size={14} /> Update Title
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={14} /> Publish Catalog
+                    </>
+                  )}
                 </button>
-              </div>
-              <input placeholder="Year" required value={newMovie.year} onChange={e => setNewMovie({...newMovie, year: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Rating (0-10)" required type="number" step="0.1" value={newMovie.rating} onChange={e => setNewMovie({...newMovie, rating: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Poster URL" required value={newMovie.poster} onChange={e => setNewMovie({...newMovie, poster: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Genre" required value={newMovie.genre} onChange={e => setNewMovie({...newMovie, genre: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Size (e.g. 2.4 GB)" required value={newMovie.size} onChange={e => setNewMovie({...newMovie, size: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Download Link (Optional URL)" value={newMovie.downloadLink} onChange={e => setNewMovie({...newMovie, downloadLink: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              <input placeholder="Watch Now Link (Optional Iframe URL)" value={newMovie.watchLink} onChange={e => setNewMovie({...newMovie, watchLink: e.target.value})} className="w-full bg-[#1a1a1a] border border-white/10 p-3 text-xs text-white outline-none focus:border-white/40" />
-              
-              <div className="flex items-center gap-3 bg-[#1a1a1a] border border-white/10 p-3 select-none">
-                <input 
-                  type="checkbox" 
-                  id="isTrending" 
-                  checked={newMovie.isTrending} 
-                  onChange={e => setNewMovie({...newMovie, isTrending: e.target.checked})} 
-                  className="w-4 h-4 rounded border-white/10 bg-[#111] text-white focus:ring-0 accent-white" 
-                />
-                <label htmlFor="isTrending" className="text-xs text-white/70 font-bold tracking-wider cursor-pointer uppercase select-none">
-                  Mark as Trending 🔥
-                </label>
-              </div>
-              
-              <button type="submit" className="mt-2 px-6 py-4 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all flex items-center justify-center gap-2">
-                {editingId ? (
-                  <>
-                    <Edit size={16} /> Update Movie
-                  </>
-                ) : (
-                  <>
-                    <Plus size={16} /> Add Movie
-                  </>
+                {editingId && (
+                  <button 
+                    type="button" 
+                    onClick={() => { setEditingId(null); setNewMovie({ title: '', year: '', rating: '', poster: '', genre: '', size: '', downloadLink: '', watchLink: '', isTrending: false }); }} 
+                    className="py-3 bg-white/[0.02] border border-white/15 hover:border-white/30 text-white font-extrabold uppercase text-[10px] tracking-widest hover:bg-white/[0.06] transition-all rounded-full flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+                  >
+                    Cancel Edit
+                  </button>
                 )}
-              </button>
-              {editingId && (
-                <button type="button" onClick={() => { setEditingId(null); setNewMovie({ title: '', year: '', rating: '', poster: '', genre: '', size: '', downloadLink: '', watchLink: '', isTrending: false }); }} className="px-6 py-3 border border-white/20 text-white font-bold uppercase text-xs tracking-widest hover:bg-white/10 transition-all flex items-center justify-center gap-2">
-                  Cancel Edit
-                </button>
-              )}
-            </form>
+              </form>
+            </div>
+          </div>
+
+          {/* MOVIE LIST */}
+          <div className="lg:col-span-2">
+            <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/[0.05] pb-4 flex items-center gap-2">
+              <Play size={16} className="text-[#9B72F3]" />
+              Manage Library
+            </h3>
+            <div className="flex flex-col gap-4">
+              <AnimatePresence>
+                {movies.map((m) => (
+                  <motion.div 
+                    key={m.id} 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95 }}
+                    transition={{ duration: 0.3 }}
+                    className="bg-white/[0.01]/75 backdrop-blur-md border border-white/[0.05] hover:border-white/10 p-4 flex items-center gap-4 group hover:bg-white/[0.03] rounded-2xl transition-all duration-300"
+                  >
+                    <img 
+                      src={m.poster} 
+                      alt={m.title} 
+                      loading="lazy" 
+                      decoding="async" 
+                      referrerPolicy="no-referrer" 
+                      className="w-12 h-18 object-cover rounded-lg shadow-lg border border-white/10" 
+                    />
+                    <div className="flex-1 min-w-0">
+                      <h4 className="text-sm font-bold tracking-tight text-white mb-1 flex items-center gap-1.5 flex-wrap">
+                        <span className="truncate">{m.title}</span>
+                        {m.isTrending && (
+                          <span className="text-[8px] bg-[#9B72F3]/15 text-[#9B72F3] border border-[#9B72F3]/30 px-2 py-0.5 rounded-full font-bold tracking-wider uppercase inline-flex items-center gap-1 leading-none">
+                            🔥 Trending
+                          </span>
+                        )}
+                      </h4>
+                      <p className="text-[10px] text-white/40 tracking-wide font-bold uppercase">
+                        {m.year} <span className="mx-1 opacity-50">•</span> {m.genre} <span className="mx-1 opacity-50">•</span> <span className="text-amber-400">★ {m.rating}</span>
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <button 
+                        onClick={() => handleEdit(m)} 
+                        className="w-9 h-9 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all duration-300 border border-white/5 cursor-pointer"
+                        title="Edit entry"
+                      >
+                        <Edit size={14} />
+                      </button>
+                      <button 
+                        onClick={() => handleDelete(m.id)} 
+                        className="w-9 h-9 flex items-center justify-center rounded-full text-red-500/50 hover:text-red-400 hover:bg-red-500/10 transition-all duration-300 border border-white/5 cursor-pointer"
+                        title="Delete entry"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         </div>
-
-        {/* MOVIE LIST */}
-        <div className="lg:col-span-2">
-           <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">Manage Library</h3>
-           <div className="flex flex-col gap-4">
-             <AnimatePresence>
-             {movies.map((m) => (
-                <motion.div 
-                  key={m.id} 
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-[#111] border border-white/5 p-4 flex items-center gap-4 group hover:bg-[#151515] transition-colors"
-                >
-                  <img src={m.poster} alt={m.title} loading="lazy" decoding="async" referrerPolicy="no-referrer" className="w-16 h-24 object-cover transition-all duration-500" />
-                  <div className="flex-1">
-                    <h4 className="text-sm font-bold uppercase tracking-wider text-white mb-1 flex items-center gap-2">
-                      {m.title}
-                      {m.isTrending && (
-                        <span className="text-[8px] bg-white/10 text-white border border-white/20 px-1.5 py-0.5 rounded-sm font-bold tracking-wider uppercase inline-flex items-center gap-1 leading-none">
-                          🔥 Trending
-                        </span>
-                      )}
-                    </h4>
-                    <p className="text-[10px] text-white/40 tracking-wide font-bold">{m.year} • {m.genre}</p>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <button onClick={() => handleEdit(m)} className="w-10 h-10 flex items-center justify-center rounded-full text-white/50 hover:text-white hover:bg-white/10 transition-all duration-300 border border-transparent hover:border-white/20">
-                      <Edit size={18} />
-                    </button>
-                    <button onClick={() => handleDelete(m.id)} className="w-10 h-10 flex items-center justify-center rounded-full text-red-500/50 hover:text-red-500 hover:bg-red-500/10 transition-all duration-300 border border-transparent hover:border-red-500/20">
-                       <Trash2 size={18} />
-                    </button>
-                  </div>
-                </motion.div>
-             ))}
-             </AnimatePresence>
-           </div>
-        </div>
-      </div>
       )}
 
       {/* ADD MOVIE REQUESTS HERE */}
       {activeTab === 'requests' && (
-      <div className="px-12 py-12 max-w-7xl mx-auto w-full">
-        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">User Movie Requests</h3>
+      <div className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full">
+        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/[0.05] pb-4 flex items-center gap-2">
+          <MessageSquare size={16} className="text-[#4285F4]" />
+          User Requests Queue
+        </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <AnimatePresence>
             {requests.map(req => (
                <motion.div 
                  key={req.id}
-                 initial={{ opacity: 0, y: 10 }}
+                 initial={{ opacity: 0, y: 15 }}
                  animate={{ opacity: 1, y: 0 }}
                  exit={{ opacity: 0, scale: 0.95 }}
-                 className="bg-[#111] border border-white/5 p-6 flex flex-col gap-4 relative"
+                 className="bg-[#0c0d13]/90 border border-white/[0.08] p-6 rounded-[2rem] flex flex-col gap-4 relative backdrop-blur-3xl shadow-[0_12px_40px_rgba(0,0,0,0.5)]"
                >
                  <div className="flex-1">
-                   <div className="flex justify-between items-start mb-2">
-                     <h4 className="text-sm font-bold uppercase tracking-wider text-white">{req.title}</h4>
-                     <span className={`text-[9px] uppercase tracking-widest font-bold px-2 py-1 ${req.status === 'pending' ? 'bg-yellow-500/10 text-yellow-500' : req.status === 'fulfilled' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                   <div className="flex justify-between items-start gap-3 mb-3">
+                     <h4 className="text-sm font-bold text-white tracking-tight leading-tight uppercase truncate">{req.title}</h4>
+                     <span className={`text-[9px] uppercase tracking-wider font-extrabold px-3 py-1 rounded-full ${
+                       req.status === 'pending' 
+                         ? 'bg-yellow-500/10 text-yellow-500 border border-yellow-500/20 animate-pulse' 
+                         : req.status === 'fulfilled' 
+                           ? 'bg-green-500/10 text-green-400 border border-green-500/20' 
+                           : 'bg-red-500/10 text-red-400 border border-red-500/20'
+                     }`}>
                        {req.status}
                      </span>
                    </div>
-                   <p className="text-[11px] text-white/50">{req.message || 'No message provided.'}</p>
+                   <p className="text-xs text-white/50 leading-relaxed font-sans">{req.message || 'No specific requests detail provided.'}</p>
                  </div>
-                 <div className="flex items-center gap-2 mt-auto pt-4 border-t border-white/5">
+                 <div className="flex items-center gap-2 mt-auto pt-4 border-t border-white/[0.05]">
                    {req.status === 'pending' && (
                      <>
                        <button onClick={async () => {
                          try {
                            await setDoc(doc(db, 'movieRequests', req.id), { status: 'fulfilled', updatedAt: serverTimestamp() }, { merge: true });
                          } catch (err) { handleFirestoreError(err, OperationType.UPDATE, 'movieRequests'); }
-                       }} className="flex-1 py-2 bg-green-500/10 text-green-500 text-[10px] uppercase font-bold hover:bg-green-500/20 border border-transparent transition-colors">Fulfill</button>
+                       }} className="flex-1 py-2 px-3 bg-green-500/10 text-green-400 text-[10px] uppercase font-black hover:bg-green-500 hover:text-white border border-green-500/20 rounded-full transition-all duration-300 cursor-pointer text-center">Approve</button>
                        <button onClick={async () => {
                          try {
                            await setDoc(doc(db, 'movieRequests', req.id), { status: 'rejected', updatedAt: serverTimestamp() }, { merge: true });
                          } catch (err) { handleFirestoreError(err, OperationType.UPDATE, 'movieRequests'); }
-                       }} className="flex-1 py-2 bg-red-500/10 text-red-500 text-[10px] uppercase font-bold hover:bg-red-500/20 border border-transparent transition-colors">Reject</button>
+                       }} className="flex-1 py-2 px-3 bg-red-500/10 text-red-400 text-[10px] uppercase font-black hover:bg-red-500 hover:text-white border border-red-500/20 rounded-full transition-all duration-300 cursor-pointer text-center">Reject</button>
                      </>
                    )}
-                   <button onClick={async () => {
-                     try {
-                        await deleteDoc(doc(db, 'movieRequests', req.id));
-                     } catch(err) { handleFirestoreError(err, OperationType.DELETE, 'movieRequests'); }
-                   }} className={`p-2 text-white/30 hover:text-white transition-colors border border-transparent ${req.status !== 'pending' ? 'w-full flex items-center justify-center gap-2' : ''}`}>
-                     <Trash2 size={16}/> {req.status !== 'pending' ? 'Delete' : ''}
+                   <button 
+                     onClick={async () => {
+                       try {
+                          await deleteDoc(doc(db, 'movieRequests', req.id));
+                       } catch(err) { handleFirestoreError(err, OperationType.DELETE, 'movieRequests'); }
+                     }} 
+                     className={`p-2.5 rounded-full text-white/30 hover:text-red-400 hover:bg-red-500/10 transition-all border border-white/5 cursor-pointer max-md:w-full flex items-center justify-center gap-2 ${req.status !== 'pending' ? 'w-full text-center' : 'w-10'}`}
+                   >
+                     <Trash2 size={13}/>
+                     {req.status !== 'pending' && <span className="text-[10px] uppercase tracking-widest font-black shrink-0">Remove Request</span>}
                    </button>
                  </div>
                </motion.div>
             ))}
           </AnimatePresence>
           {requests.length === 0 && (
-            <div className="col-span-full py-12 text-center border border-white/5 bg-[#111]">
-              <span className="text-[10px] tracking-widest uppercase font-bold text-white/40">No pending requests</span>
+            <div className="col-span-full py-16 text-center border border-white/[0.05] bg-[#0c0d13]/55 rounded-[2rem] flex flex-col items-center justify-center gap-2 backdrop-blur-md">
+              <MessageSquare size={32} className="text-white/10" />
+              <span className="text-xs tracking-widest uppercase font-black text-white/30 mt-3">No pending movie requests</span>
+              <p className="text-[11px] text-white/15">All guest request channels are tidy and clear.</p>
             </div>
           )}
         </div>
@@ -1159,22 +1381,25 @@ const AdminDashboard = ({
 
       {/* MANAGE PAGES HERE */}
       {activeTab === 'pages' && (
-      <div className="px-12 py-12 max-w-5xl mx-auto w-full">
-        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">Terms & Conditions Settings</h3>
-        <div className="bg-[#111] border border-white/5 p-8 flex flex-col gap-6">
+      <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto w-full">
+        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/[0.05] pb-4 flex items-center gap-2">
+          <FileText size={16} className="text-[#9B72F3]" />
+          Terms &amp; Conditions settings
+        </h3>
+        <div className="bg-[#0c0d13]/90 border border-white/[0.08] p-8 rounded-[2rem] flex flex-col gap-6 backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.5)]">
           <textarea 
             value={termsContent}
             onChange={(e) => setTermsContent(e.target.value)}
-            placeholder="Enter Terms and Conditions... (Formatting is preserved)"
-            className="w-full bg-[#1a1a1a] border border-white/10 p-6 text-sm text-white outline-none focus:border-white/40 transition-colors resize-y h-96 font-medium leading-relaxed"
+            placeholder="Write official Terms and Conditions here..."
+            className="w-full bg-white/[0.02] border border-white/10 p-6 text-xs text-white outline-none focus:border-[#9B72F3]/60 focus:bg-white/[0.04] transition-all rounded-[1.5rem] resize-y h-96 font-sans leading-relaxed tracking-wider font-semibold"
           ></textarea>
           <div className="flex justify-end">
             <button 
               onClick={handleSaveTerms} 
               disabled={isSavingTerms}
-              className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all text-center disabled:opacity-50"
+              className="px-8 py-3.5 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] hover:from-[#3572df] hover:to-[#875de2] text-white font-extrabold uppercase text-[10px] tracking-widest transition-all duration-300 text-center rounded-full hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shadow-[0_4px_20px_rgba(155,114,243,0.25)]"
             >
-              {isSavingTerms ? 'Saving...' : 'Save Terms'}
+              {isSavingTerms ? 'Saving policies...' : 'Publish Update'}
             </button>
           </div>
         </div>
@@ -1183,61 +1408,70 @@ const AdminDashboard = ({
 
       {/* MANAGE ADS HERE */}
       {activeTab === 'ads' && (
-      <div className="px-12 py-12 max-w-5xl mx-auto w-full">
-        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">Download Ad Banner Settings</h3>
-        <div className="bg-[#111] border border-white/5 p-8 flex flex-col gap-6">
-          <div className="flex items-center gap-4 border-b border-white/5 pb-6">
-            <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 flex-1 flex items-center justify-between">
-              Enable Ad Banner Before Download
+      <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto w-full">
+        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/[0.05] pb-4 flex items-center gap-2">
+          <Sliders size={16} className="text-[#4285F4]" />
+          Ad Banner Settings
+        </h3>
+        <div className="bg-[#0c0d13]/90 border border-white/[0.08] p-8 rounded-[2rem] flex flex-col gap-6 backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.5)]">
+          <div className="flex items-center justify-between gap-4 border-b border-white/[0.08] pb-6">
+            <div>
+              <span className="text-xs uppercase font-extrabold tracking-wider text-white">Ad Delivery System</span>
+              <p className="text-[10px] text-white/40 font-bold uppercase mt-1">Request users to watch an ad before downloading files</p>
+            </div>
+            <label className="relative inline-flex items-center cursor-pointer select-none">
               <input 
                  type="checkbox" 
                  checked={adIsActive} 
                  onChange={(e) => setAdIsActive(e.target.checked)} 
-                 className="w-5 h-5 accent-white ml-auto"
+                 className="sr-only peer"
               />
+              <div className="w-11 h-6 bg-white/10 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#4285F4]"></div>
             </label>
           </div>
           
-          <div>
-            <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">Timer Duration (Seconds)</label>
-            <input 
-              type="number" 
-              value={adTimerSeconds}
-              onChange={(e) => setAdTimerSeconds(Number(e.target.value))}
-              min={0}
-              max={60}
-              className="w-full bg-[#1a1a1a] border border-white/10 p-4 text-sm text-white outline-none focus:border-white/40 transition-colors"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">Timer Duration (Seconds)</label>
+              <input 
+                type="number" 
+                value={adTimerSeconds}
+                onChange={(e) => setAdTimerSeconds(Number(e.target.value))}
+                min={0}
+                max={60}
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+              />
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">Ad Poster Background URL (Optional)</label>
+              <input 
+                type="text"
+                value={adPosterUrl}
+                onChange={(e) => setAdPosterUrl(e.target.value)}
+                placeholder="https://example.com/poster.jpg"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+              />
+            </div>
           </div>
 
-          <div>
-            <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">Ad Poster URL (Optional background image)</label>
-            <input 
-              type="text"
-              value={adPosterUrl}
-              onChange={(e) => setAdPosterUrl(e.target.value)}
-              placeholder="https://example.com/poster.jpg"
-              className="w-full bg-[#1a1a1a] border border-white/10 p-4 text-sm text-white outline-none focus:border-white/40 transition-colors"
-            />
-          </div>
-
-          <div>
-            <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">Ad Content (HTML/Text)</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">Ad Content Delivery (HTML / Rich Text)</label>
             <textarea 
               value={adContent}
               onChange={(e) => setAdContent(e.target.value)}
-              placeholder="<img src='ad.jpg' /> or Just text..."
-              className="w-full bg-[#1a1a1a] border border-white/10 p-6 text-sm text-white outline-none focus:border-white/40 transition-colors resize-y h-64 font-mono text-xs leading-relaxed"
+              placeholder="Provide embed code, HTML links or banners here..."
+              className="w-full bg-white/[0.02] border border-white/10 p-6 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all rounded-[1.5rem] resize-y h-60 font-mono leading-relaxed"
             ></textarea>
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-end mt-4">
             <button 
               onClick={handleSaveAd} 
               disabled={isSavingAd}
-              className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all text-center disabled:opacity-50"
+              className="px-8 py-3.5 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] hover:from-[#3572df] hover:to-[#875de2] text-white font-extrabold uppercase text-[10px] tracking-widest transition-all duration-300 text-center rounded-full hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shadow-[0_4px_20px_rgba(155,114,243,0.25)]"
             >
-              {isSavingAd ? 'Saving...' : 'Save Setting'}
+              {isSavingAd ? 'Saving active ad...' : 'Publish Ad Setting'}
             </button>
           </div>
         </div>
@@ -1246,54 +1480,64 @@ const AdminDashboard = ({
 
       {/* MANAGE SETTINGS HERE */}
       {activeTab === 'settings' && (
-      <div className="px-12 py-12 max-w-5xl mx-auto w-full">
-        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/5 pb-4">General Website Settings</h3>
-        <div className="bg-[#111] border border-white/5 p-8 flex flex-col gap-6">
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1">
-              <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">Website Name</label>
+      <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto w-full">
+        <h3 className="text-sm font-bold uppercase tracking-wider mb-6 text-white border-b border-white/[0.05] pb-4 flex items-center gap-2">
+          <Sliders size={16} className="text-[#22D3EE]" />
+          General Console Settings
+        </h3>
+        <div className="bg-[#0c0d13]/90 border border-white/[0.08] p-8 rounded-[2rem] flex flex-col gap-6 backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.5)]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">Platform Name</label>
               <input 
                 type="text" 
                 value={adminSiteName}
                 onChange={(e) => setAdminSiteName(e.target.value)}
-                className="w-full bg-[#1a1a1a] border border-white/10 p-4 text-sm text-white outline-none focus:border-white/40 transition-colors"
-                placeholder="Ex. Findinggoodd"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                placeholder="Ex. FindingGoodd"
               />
             </div>
-            <div className="flex-1">
-              <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">Copyright Text</label>
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">Copyright Disclaimer</label>
               <input 
                 type="text" 
                 value={adminCopyrightText}
                 onChange={(e) => setAdminCopyrightText(e.target.value)}
-                className="w-full bg-[#1a1a1a] border border-white/10 p-4 text-sm text-white outline-none focus:border-white/40 transition-colors"
-                placeholder="Ex. Copyright 2026 Admin"
+                className="w-full bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                placeholder="Ex. © 2026 FindingGoodd. All Rights Reserved."
               />
             </div>
           </div>
 
-          <div className="mt-6">
-            <label className="text-[10px] uppercase font-bold tracking-widest text-white/50 block mb-3">OMDb API Key (Optional auto-fetch setup)</label>
-            <div className="flex gap-4 items-center">
+          <div className="mt-2 flex flex-col gap-1.5">
+            <label className="text-[9px] uppercase tracking-widest font-black text-white/3PL-2">OMDb API Key (Auto-fetch engine)</label>
+            <div className="flex gap-3">
               <input 
                 type="text" 
                 value={adminOmdbApiKey}
                 onChange={(e) => setAdminOmdbApiKey(e.target.value)}
-                className="flex-1 bg-[#1a1a1a] border border-white/10 p-4 text-sm text-white outline-none focus:border-white/40 transition-colors"
-                placeholder="Ex. 8df9d3a"
+                className="flex-1 bg-white/[0.02] border border-white/10 rounded-full py-2.5 px-4 text-xs text-white outline-none focus:border-[#4285F4]/60 focus:bg-white/[0.04] transition-all font-sans" 
+                placeholder="Ex. d8a1c9e"
               />
-              <a href="https://www.omdbapi.com/apikey.aspx" target="_blank" rel="noopener noreferrer" className="text-[10px] uppercase tracking-widest font-bold text-white/40 hover:text-white border-b border-white/20 pb-1">Get Free Key</a>
+              <a 
+                href="https://www.omdbapi.com/apikey.aspx" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="px-5 py-2.5 rounded-full border border-white/10 hover:border-[#4285F4] hover:bg-[#4285F4]/10 text-[9px] uppercase tracking-widest font-black text-white/60 hover:text-white transition-all flex items-center cursor-pointer justify-center whitespace-nowrap"
+              >
+                Register Key
+              </a>
             </div>
-            <p className="text-white/30 text-[10px] mt-2">Required for the "Auto-Fill 🪄" feature to work when adding movies.</p>
+            <p className="text-white/30 text-[9px] font-bold uppercase pl-2 mt-1">This token allows full automated releases with direct cover, genre, and details synthesis</p>
           </div>
 
-          <div className="flex justify-end mt-8">
+          <div className="flex justify-end mt-4">
             <button 
               onClick={handleSaveSiteName} 
               disabled={isSavingSiteName}
-              className="px-8 py-4 bg-white text-black font-black uppercase text-xs tracking-widest hover:bg-white/90 transition-all text-center disabled:opacity-50"
+              className="px-8 py-3.5 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] hover:from-[#3572df] hover:to-[#875de2] text-white font-extrabold uppercase text-[10px] tracking-widest transition-all duration-300 text-center rounded-full hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 inline-flex items-center gap-1.5 shadow-[0_4px_20px_rgba(155,114,243,0.25)]"
             >
-              {isSavingSiteName ? 'Saving...' : 'Save Settings'}
+              {isSavingSiteName ? 'Saving platform preferences...' : 'Apply Console Configuration'}
             </button>
           </div>
         </div>
@@ -1302,24 +1546,27 @@ const AdminDashboard = ({
 
       {/* VIEW ANALYTICS HERE */}
       {activeTab === 'analytics' && (
-      <div className="px-6 md:px-12 py-12 max-w-5xl mx-auto w-full">
+      <div className="px-6 md:px-12 py-12 max-w-7xl mx-auto w-full">
         {/* Analytics Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 border-b border-white/[0.05] pb-6">
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-white border-b border-white/5 pb-2">Media Performance Analytics</h3>
-            <p className="text-xs text-white/40 mt-1">Real-time interaction telemetry and audience request insight metrics.</p>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white flex items-center gap-2">
+              <BarChart2 size={16} className="text-[#9B72F3]" />
+              Media Action Telemetry Insights
+            </h3>
+            <p className="text-xs text-white/40 mt-1">Real-time interaction logs of watching impulses and downloads metrics.</p>
           </div>
           
-          <div className="flex gap-4">
-            <div className="bg-[#111] border border-white/5 p-4 rounded-sm flex flex-col min-w-[120px]">
-              <span className="text-[9px] uppercase font-mono text-white/30 tracking-widest leading-none">Total Views</span>
-              <span className="text-xl font-display font-black text-[#FFD700] mt-1">
+          <div className="flex gap-3">
+            <div className="bg-[#0c0d13]/90 border border-white/[0.08] px-5 py-3 rounded-2xl flex flex-col min-w-[130px] backdrop-blur-3xl shadow-lg">
+              <span className="text-[8px] uppercase font-bold text-white/30 tracking-widest leading-none">Total Watch Actions</span>
+              <span className="text-lg font-display font-black text-[#4285F4] mt-1.5">
                 {analyticsData.reduce((acc, curr) => acc + (curr.views || 0), 0).toLocaleString()}
               </span>
             </div>
-            <div className="bg-[#111] border border-white/5 p-4 rounded-sm flex flex-col min-w-[120px]">
-              <span className="text-[9px] uppercase font-mono text-white/30 tracking-widest leading-none">Total Downloads</span>
-              <span className="text-xl font-display font-black text-white mt-1">
+            <div className="bg-[#0c0d13]/90 border border-white/[0.08] px-5 py-3 rounded-2xl flex flex-col min-w-[130px] backdrop-blur-3xl shadow-lg">
+              <span className="text-[8px] uppercase font-bold text-white/30 tracking-widest leading-none">Total File Saved</span>
+              <span className="text-lg font-display font-black text-[#9B72F3] mt-1.5">
                 {analyticsData.reduce((acc, curr) => acc + (curr.downloads || 0), 0).toLocaleString()}
               </span>
             </div>
@@ -1327,41 +1574,41 @@ const AdminDashboard = ({
         </div>
 
         {/* Analytics Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
           {/* Leaders List */}
-          <div className="md:col-span-2 bg-[#111] border border-white/5 p-6 rounded-sm flex flex-col h-full min-h-[400px]">
-            <h4 className="text-[10px] uppercase tracking-widest font-bold text-white/50 mb-4 border-b border-white/5 pb-2">Content Popularity Rankings</h4>
+          <div className="lg:col-span-2 bg-[#0c0d13]/90 border border-white/[0.08] p-6 rounded-[2rem] flex flex-col h-full min-h-[400px] backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.5)]">
+            <h4 className="text-[9px] uppercase tracking-widest font-black text-white/40 mb-4 border-b border-white/[0.05] pb-3">Internal Release Popularity Rankings</h4>
             
             {isLoadingAnalytics ? (
               <div className="flex-1 flex items-center justify-center text-xs text-white/20 uppercase tracking-widest">
-                Scanning Database signals...
+                Scanning Telemetry packets...
               </div>
             ) : analyticsData.length === 0 ? (
-              <div className="flex-1 flex flex-col items-center justify-center text-xs text-white/20 uppercase tracking-widest py-16">
-                <span>No analytics events recorded yet</span>
-                <span className="text-[10px] text-white/10 mt-2 normal-case">Interact with watch or download buttons on the home screen to test tracking.</span>
+              <div className="flex-1 flex flex-col items-center justify-center text-xs text-white/20 uppercase tracking-widest py-16 text-center gap-1">
+                <span>No analytics pulses recorded yet</span>
+                <span className="text-[10px] text-white/10 mt-2 normal-case">Trigger download sequences or movie streams to register visual logs.</span>
               </div>
             ) : (
-              <div className="flex-1 overflow-y-auto max-h-[400px] divide-y divide-white/5 scrollbar-thin scrollbar-thumb-white/10">
+              <div className="flex-1 overflow-y-auto max-h-[360px] divide-y divide-white/[0.05] scrollbar-thin scrollbar-thumb-white/10">
                 {analyticsData.map((item, index) => (
-                  <div key={item.id} className="py-4 flex items-center justify-between hover:bg-white/[0.01] px-2 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <span className="text-xs font-mono font-bold text-white/20">#{index+1}</span>
-                      <div>
-                        <div className="text-sm font-bold text-white tracking-tight">{item.movieTitle}</div>
-                        <div className="text-[10px] text-white/30 font-mono mt-0.5">ID: {item.movieId}</div>
+                  <div key={item.id} className="py-3 flex items-center justify-between hover:bg-white/[0.01] px-2 rounded-xl transition-all duration-300">
+                    <div className="flex items-center gap-4 min-w-0">
+                      <span className="text-xs font-mono font-bold text-white/20 shrink-0">#{index+1}</span>
+                      <div className="min-w-0">
+                        <div className="text-sm font-bold text-white tracking-tight truncate pr-2">{item.movieTitle}</div>
+                        <div className="text-[8px] text-white/30 font-mono tracking-wider mt-0.5 uppercase">ID: {item.movieId}</div>
                       </div>
                     </div>
                     
-                    <div className="flex items-center gap-8 text-right">
+                    <div className="flex items-center gap-6 text-right shrink-0">
                       <div>
-                        <div className="text-[9px] font-mono uppercase text-white/30 tracking-widest leading-none">Views</div>
-                        <div className="text-sm font-bold text-[#FFD700] mt-1">{item.views || 0}</div>
+                        <div className="text-[8px] font-mono uppercase text-white/30 tracking-widest leading-none">Views</div>
+                        <div className="text-xs font-black text-[#4285F4] mt-1 pr-1">{item.views || 0}</div>
                       </div>
-                      <div className="min-w-[80px]">
-                        <div className="text-[9px] font-mono uppercase text-white/30 tracking-widest leading-none">Downloads</div>
-                        <div className="text-sm font-bold text-white mt-1">{item.downloads || 0}</div>
+                      <div className="min-w-[70px]">
+                        <div className="text-[8px] font-mono uppercase text-white/30 tracking-widest leading-none">Downloads</div>
+                        <div className="text-xs font-black text-[#9B72F3] mt-1">{item.downloads || 0}</div>
                       </div>
                     </div>
                   </div>
@@ -1371,9 +1618,9 @@ const AdminDashboard = ({
           </div>
 
           {/* Activity / Ratios / Meta Info Card */}
-          <div className="bg-[#111] border border-white/5 p-6 rounded-sm flex flex-col justify-between">
+          <div className="bg-[#0c0d13]/90 border border-white/[0.08] p-6 rounded-[2rem] flex flex-col justify-between backdrop-blur-3xl shadow-[0_12px_45px_rgba(0,0,0,0.5)]">
             <div>
-              <h4 className="text-[10px] uppercase tracking-widest font-bold text-white/50 mb-4 border-b border-white/5 pb-2">Conversion Efficiency</h4>
+              <h4 className="text-[9px] uppercase tracking-widest font-black text-white/40 mb-4 border-b border-white/[0.05] pb-3">Conversion Efficiency</h4>
               
               {analyticsData.length > 0 ? (
                 <div className="space-y-6 mt-4">
@@ -1389,25 +1636,25 @@ const AdminDashboard = ({
                     return (
                       <>
                         <div>
-                          <div className="text-[10px] font-mono uppercase text-white/40 tracking-wider">Download-to-View Ratio</div>
+                          <div className="text-[9px] font-mono uppercase text-white/40 tracking-wider">Download-to-View Ratio</div>
                           <div className="text-3xl font-display font-black text-white mt-1">{conversionRate}%</div>
-                          <div className="w-full bg-white/5 h-1 mt-2.5 rounded-full overflow-hidden">
+                          <div className="w-full bg-white/5 h-1.5 mt-2.5 rounded-full overflow-hidden">
                             <div 
-                              className="bg-white h-full rounded-full transition-all duration-1000" 
+                              className="bg-gradient-to-r from-[#4285F4] to-[#9B72F3] h-full rounded-full transition-all duration-1000" 
                               style={{ width: `${Math.min(100, Number(conversionRate))}%` }}
                             />
                           </div>
                         </div>
 
                         <div>
-                          <div className="text-[10px] font-mono uppercase text-white/40 tracking-wider mb-1.5">Top-viewed Asset</div>
-                          <span className="text-xs font-bold text-[#FFD700] block">{sortedByViews[0]?.movieTitle || 'None'}</span>
+                          <div className="text-[9px] font-mono uppercase text-white/40 tracking-wider mb-1.5">Top-viewed Asset</div>
+                          <span className="text-xs font-bold text-[#4285F4] block truncate">{sortedByViews[0]?.movieTitle || 'None'}</span>
                           <span className="text-[9px] font-mono text-white/30 mt-0.5 block">{sortedByViews[0]?.views || 0} signals loaded</span>
                         </div>
 
                         <div>
-                          <div className="text-[10px] font-mono uppercase text-white/40 tracking-wider mb-1.5">Top-retrieved Asset</div>
-                          <span className="text-xs font-bold text-white block">{sortedByDownloads[0]?.movieTitle || 'None'}</span>
+                          <div className="text-[9px] font-mono uppercase text-white/40 tracking-wider mb-1.5">Top-retrieved Asset</div>
+                          <span className="text-xs font-bold text-[#9B72F3] block truncate">{sortedByDownloads[0]?.movieTitle || 'None'}</span>
                           <span className="text-[9px] font-mono text-white/30 mt-0.5 block">{sortedByDownloads[0]?.downloads || 0} hits recorded</span>
                         </div>
                       </>
@@ -1421,8 +1668,8 @@ const AdminDashboard = ({
               )}
             </div>
 
-            <div className="mt-8 border-t border-white/5 pt-4 text-[10px] text-white/30 leading-relaxed font-mono">
-              ⚡ Database reads optimized via O(n) local synchronization client. Metrics feed directly into the admin visual panel using a dedicated secure schema.
+            <div className="mt-8 border-t border-white/[0.05] pt-4 text-[9px] text-white/30 leading-relaxed font-mono">
+              ⚡ Metrics feed directly into the admin visual panel using a dedicated secure firebase stream schema.
             </div>
           </div>
 
