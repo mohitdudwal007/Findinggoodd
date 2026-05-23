@@ -176,13 +176,13 @@ const Navbar: React.FC<NavbarProps> = ({
 interface HeroProps {
   onExploreClick: () => void;
   featuredMovie?: Movie;
-  onWatchMovie: (movie: Movie) => void;
-  onDownloadMovie: (movie: Movie) => void;
+  onWatchMovie?: (movie: Movie) => void;
+  onDownloadMovie?: (movie: Movie) => void;
 }
 
-const Hero: React.FC<HeroProps> = ({ onExploreClick, featuredMovie, onWatchMovie, onDownloadMovie }) => {
+const Hero: React.FC<HeroProps> = ({ onExploreClick }) => {
   return (
-    <section className="relative min-h-[92vh] flex items-center px-6 md:px-16 xl:px-24 pt-28 pb-16 overflow-hidden border-b border-white/[0.04]">
+    <section className="relative min-h-[80vh] flex items-center px-6 md:px-16 xl:px-24 pt-32 pb-24 overflow-hidden border-b border-white/[0.04]">
       {/* Dynamic Network Lines and Mesh */}
       <div className="absolute inset-0 bg-[#040508] z-0">
         <div className="absolute top-[-30%] left-[-10%] w-[65vw] h-[65vw] bg-radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#4285F4]/10 via-transparent to-transparent blur-[120px] opacity-45 animate-pulse-slow"></div>
@@ -193,138 +193,65 @@ const Hero: React.FC<HeroProps> = ({ onExploreClick, featuredMovie, onWatchMovie
       </div>
 
       {/* Floating Dynamic Orbital Circles */}
-      <div className="absolute top-[15%] right-[10%] w-[40vw] h-[40vw] border border-white/[0.03] rounded-full mix-blend-screen opacity-50 pointer-events-none hidden lg:block">
-        <div className="absolute inset-8 border border-[#9B72F3]/5 rounded-full animate-pulse-slow"></div>
-        <div className="absolute inset-24 border border-[#4285F4]/3 rounded-full animate-float"></div>
+      <div className="absolute top-[10%] left-1/2 -translate-x-1/2 w-[50vw] h-[50vw] border border-white/[0.02] rounded-full mix-blend-screen opacity-40 pointer-events-none hidden lg:block">
+        <div className="absolute inset-12 border border-[#9B72F3]/3 rounded-full animate-pulse-slow"></div>
+        <div className="absolute inset-32 border border-[#4285F4]/2 rounded-full animate-float"></div>
       </div>
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-        {/* Left Side Content */}
-        <div className="lg:col-span-7 flex flex-col items-start text-left">
-          <motion.div 
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 mb-6"
+      <div className="max-w-4xl mx-auto w-full flex flex-col items-center text-center relative z-10">
+        <motion.div 
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center gap-2 mb-6 justify-center"
+        >
+          <span className="w-6 h-[2px] bg-gradient-to-r from-[#4285F4] to-[#9B72F3]"></span>
+          <span className="text-[9px] font-black uppercase tracking-[0.25em] text-gradient-gemini">
+            Verified Cloud Catalog & Streaming
+          </span>
+          <span className="w-6 h-[2px] bg-gradient-to-r from-[#9B72F3] to-[#EA4335]"></span>
+        </motion.div>
+
+        <motion.h1 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className="text-4xl sm:text-6xl xl:text-[6.5rem] font-display font-black tracking-tight leading-[0.95] text-white mb-8 uppercase"
+        >
+          DIRECT.<br />
+          <span className="italic font-light text-slate-300 font-sans mr-3 capitalize">HIGH-SPEED.</span>
+          <span className="text-gradient-gemini font-black block sm:inline">CINEMA.</span>
+        </motion.h1>
+
+        <motion.p 
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 0.75, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.7 }}
+          className="text-xs md:text-sm text-slate-300 font-medium tracking-widest uppercase leading-relaxed max-w-2xl mb-12"
+        >
+          Your dynamic standalone digital catalog. Instantly watch and download high-definition releases without speed throttling, intrusive redirections, or visual noise. Premium curation at your fingertips.
+        </motion.p>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3, duration: 0.7 }}
+          className="flex flex-wrap items-center justify-center gap-5"
+        >
+          <button 
+            onClick={onExploreClick}
+            className="px-10 py-5 bg-gradient-to-r from-[#4285F4] via-[#9B72F3] to-[#EA4335] text-white text-[11px] font-extrabold uppercase tracking-widest rounded-full hover:scale-[1.03] active:scale-[0.97] hover:shadow-[0_12px_40px_rgba(155,114,243,0.35)] transition-all duration-300 flex items-center gap-2.5 cursor-pointer"
           >
-            <span className="w-8 h-[2px] bg-gradient-to-r from-[#4285F4] to-[#9B72F3]"></span>
-            <span className="text-[9px] font-black uppercase tracking-[0.25em] text-gradient-gemini">
-              Google Gemini Powered Cinema Network
-            </span>
-          </motion.div>
-
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl sm:text-6xl xl:text-[5.5rem] font-display font-black tracking-tight leading-[0.95] text-white mb-6 uppercase"
+            <span>Explore Catalog Shelf</span>
+            <ArrowRight size={13} className="ml-1 animate-pulse" />
+          </button>
+          <button 
+            onClick={onExploreClick}
+            className="px-10 py-5 bg-white/[0.02] border border-white/10 hover:border-white/20 text-white/50 hover:text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-white/[0.04] transition-all duration-300 cursor-pointer"
           >
-            Direct.<br />
-            <span className="italic font-light text-slate-300 font-sans mr-3 capitalize">High-Speed.</span>
-            <span className="text-gradient-gemini font-black block sm:inline">Cinema.</span>
-          </motion.h1>
-
-          <motion.p 
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 0.75, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.7 }}
-            className="text-xs md:text-sm text-slate-300 font-medium tracking-wide uppercase leading-relaxed max-w-xl mb-10"
-          >
-            Your dynamic standalone digital catalog. Instantly watch and download high-definition releases without speed throttling, intrusive redirections, or visual noise. Premium curation at your fingertips.
-          </motion.p>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.7 }}
-            className="flex flex-wrap items-center gap-4"
-          >
-            <button 
-              onClick={onExploreClick}
-              className="px-8 py-4 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] text-white text-[11px] font-extrabold uppercase tracking-widest rounded-full hover:scale-[1.02] active:scale-[0.97] hover:shadow-[0_12px_30px_rgba(155,114,243,0.3)] transition-all flex items-center gap-2"
-            >
-              <span>Explore Archival Shelf</span>
-              <ArrowRight size={13} className="ml-1 animate-pulse" />
-            </button>
-            <button 
-              onClick={onExploreClick}
-              className="px-8 py-4 bg-white/[0.02] border border-white/10 hover:border-white/20 text-white/50 hover:text-white text-[11px] font-black uppercase tracking-widest rounded-full hover:bg-white/[0.04] transition-all"
-            >
-              Latest Additions
-            </button>
-          </motion.div>
-        </div>
-
-        {/* Right Side Featured Bento Card (WOW Feature) */}
-        <div className="lg:col-span-5 w-full flex justify-center">
-          {featuredMovie ? (
-            <motion.div 
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.4, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-[360px] bg-[#0d0e15]/60 border border-white/10 hover:border-[#9B72F3]/45 rounded-[2.5rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative group overflow-hidden transition-all duration-500 hover:-translate-y-2"
-            >
-              {/* Symmetrical Neon Highlight Underline */}
-              <span className="absolute inset-x-0 bottom-0 h-[4px] bg-gradient-to-r from-[#4285F4] via-[#9B72F3] to-[#EA4335] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20"></span>
-
-              <div className="absolute inset-0 bg-gradient-to-b from-[#9B72F3]/10 to-transparent z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-              
-              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-5 border border-white/5 shadow-inner">
-                <img 
-                  src={featuredMovie.poster} 
-                  alt={featuredMovie.title} 
-                  className="w-full h-full object-cover group-hover:scale-108 transition-all duration-1000 ease-[0.16,1,0.3,1]"
-                  referrerPolicy="no-referrer"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
-                
-                {/* Micro-rating Badge */}
-                <span className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded-full text-amber-400 font-sans font-black text-xs flex items-center gap-1.5 shadow-lg">
-                  <Star size={11} fill="currentColor" className="text-amber-400 animate-pulse" />
-                  <span>{featuredMovie.rating}</span>
-                </span>
-
-                <span className="absolute bottom-4 left-4 bg-[#9B72F3]/25 backdrop-blur-md border border-[#9B72F3]/30 text-white font-sans font-extrabold uppercase tracking-widest text-[9px] px-3 py-1.5 rounded-full shadow-md animate-pulse">
-                  ⚡ TOP RELEASE
-                </span>
-
-                {/* Instant center play circle */}
-                <button 
-                  onClick={() => onWatchMovie(featuredMovie)}
-                  className="absolute inset-0 m-auto w-15 h-15 bg-white/10 backdrop-blur-md border border-white/25 text-white rounded-full flex items-center justify-center hover:scale-110 hover:bg-white hover:text-black hover:border-white transition-all duration-300 shadow-2xl cursor-pointer"
-                >
-                  <Play size={20} fill="currentColor" className="ml-1" />
-                </button>
-              </div>
-
-              <div className="flex flex-col relative z-10 px-1">
-                <span className="text-[10px] font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#4285F4] to-[#9B72F3] mb-1.5">{featuredMovie.genre}</span>
-                <h4 className="text-xl font-display font-black text-white uppercase leading-tight line-clamp-1 mb-4 group-hover:text-[#4285F4] transition-colors">{featuredMovie.title}</h4>
-                
-                <div className="flex items-center justify-between text-[10px] font-black text-white/40 uppercase tracking-widest border-t border-white/[0.05] pt-5 mt-1">
-                  <span>File: <strong className="text-white font-mono ml-1.5 bg-white/[0.04] px-2.5 py-1 rounded-sm border border-white/5">{featuredMovie.size}</strong></span>
-                  <div className="flex gap-2">
-                    <button onClick={() => onWatchMovie(featuredMovie)} className="px-3.5 py-2 bg-[#4285F4]/10 text-[#4285F4] hover:bg-[#4285F4]/20 border border-[#4285F4]/20 rounded-full font-black tracking-widest text-[9px] cursor-pointer transition-colors">WATCH</button>
-                    <button onClick={() => onDownloadMovie(featuredMovie)} className="px-3.5 py-2 bg-white text-black hover:bg-slate-200 border border-white rounded-full font-black tracking-widest text-[9px] cursor-pointer transition-transform duration-300 hover:scale-102">GET</button>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            // Exquisite fallback placeholder illustration if empty
-            <motion.div 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 0.8 }}
-              className="w-full max-w-[340px] border border-white/5 bg-white/[0.01] rounded-[2.5rem] p-8 flex flex-col items-center justify-center text-center gap-4 py-20 relative"
-            >
-              <div className="w-16 h-16 bg-white/[0.02] border border-white/5 rounded-full flex items-center justify-center text-white/20">
-                <Film size={28} />
-              </div>
-              <span className="text-[10px] uppercase tracking-widest font-black text-white/40">Cinema Database Status</span>
-              <p className="text-[11px] text-white/20 uppercase font-medium">Awaiting cloud deployment configuration to stream highlights.</p>
-            </motion.div>
-          )}
-        </div>
+            Latest Releases
+          </button>
+        </motion.div>
       </div>
     </section>
   );
