@@ -1,0 +1,127 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+    
+    function isSignedIn() { return request.auth != null; }
+    function isAdmin() { return isSignedIn() && request.auth.token.email == 'mohitdudwal007@gmail.com'; }
+    function isValidId(id) { return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$'); }
+    function incoming() { return request.resource.data; }
+    function existing() { return resource.data; }
+
+    function isValidMovie(data) {
+      return data.keys().hasAll(['title', 'year', 'rating', 'poster', 'genre', 'size', 'createdAt', 'updatedAt'])
+        && (!('director' in data) || (data.director is string && data.director.size() > 0 && data.director.size() <= 200))
+        && (!('watchLink' in data) || (data.watchLink is string && data.watchLink.size() <= 2000))
+        && (!('downloadLink' in data) || (data.downloadLink is string && data.downloadLink.size() <= 2000))
+        && (!('isTrending' in data) || (data.isTrending is bool))
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.year is string && data.year.size() == 4
+        && data.rating is number && data.rating >= 0 && data.rating <= 10
+        && data.poster is string && data.poster.size() > 0 && data.poster.size() <= 1000
+        && data.genre is string && data.genre.size() > 0 && data.genre.size() <= 100
+        && data.size is string && data.size.size() > 0 && data.size.size() <= 50
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMovieRequest(data) {
+      return data.keys().hasAll(['title', 'message', 'status', 'createdAt', 'updatedAt'])
+        && data.title is string && data.title.size() > 0 && data.title.size() <= 200
+        && data.message is string && data.message.size() <= 1000
+        && data.status is string && data.status in ['pending', 'fulfilled', 'rejected']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidPage(data) {
+       return data.keys().hasAll(['title', 'content', 'updatedAt'])
+         && data.title is string && data.title.size() > 0 && data.title.size() <= 100
+         && data.content is string && data.content.size() <= 50000
+         && data.updatedAt is timestamp;
+    }
+
+    function isValidAdBanner(data) {
+       return data.keys().hasAll(['content', 'isActive', 'timerSeconds', 'updatedAt'])
+         && data.content is string && data.content.size() <= 50000
+         && (!('posterUrl' in data) || (data.posterUrl is string && data.posterUrl.size() <= 2000))
+         && data.isActive is bool
+         && data.timerSeconds is number && data.timerSeconds >= 0 && data.timerSeconds <= 60
+         && data.updatedAt is timestamp;
+    }
+
+    function isValidSiteSettings(data) {
+       return data.keys().hasAll(['siteName', 'updatedAt'])
+         && data.siteName is string && data.siteName.size() > 0 && data.siteName.size() <= 100
+         && (!('copyrightText' in data) || (data.copyrightText is string && data.copyrightText.size() <= 200))
+         && (!('omdbApiKey' in data) || (data.omdbApiKey is string && data.omdbApiKey.size() <= 200))
+         && data.updatedAt is timestamp;
+    }
+
+    function isValidAnalytics(data) {
+      return data.keys().hasAll(['movieId', 'movieTitle', 'views', 'downloads', 'updatedAt'])
+        && data.movieId is string && data.movieId.size() > 0 && data.movieId.size() <= 128
+        && data.movieTitle is string && data.movieTitle.size() > 0 && data.movieTitle.size() <= 200
+        && data.views is number && data.views >= 0
+        && data.downloads is number && data.downloads >= 0
+        && data.updatedAt is timestamp;
+    }
+
+    match /movies/{movieId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(movieId) && isValidMovie(incoming()) && (incoming().keys().size() >= 8 && incoming().keys().size() <= 13) && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(movieId) && isValidMovie(incoming()) 
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'director', 'year', 'rating', 'poster', 'genre', 'size', 'downloadLink', 'watchLink', 'isTrending', 'updatedAt'])
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(movieId);
+    }
+
+    match /analytics/{movieId} {
+      allow read: if true;
+      allow create: if isValidId(movieId) && isValidAnalytics(incoming()) && incoming().keys().size() == 5 && incoming().updatedAt == request.time;
+      allow update: if isValidId(movieId) && isValidAnalytics(incoming())
+        && (isAdmin() || (
+             incoming().diff(existing()).affectedKeys().hasAny(['views', 'downloads', 'updatedAt'])
+             && (incoming().views == existing().views || incoming().views == existing().views + 1)
+             && (incoming().downloads == existing().downloads || incoming().downloads == existing().downloads + 1)
+           ))
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin();
+    }
+    
+    match /movieRequests/{requestId} {
+      allow read: if isAdmin();
+      allow create: if isValidId(requestId) && isValidMovieRequest(incoming()) && incoming().keys().size() == 5 && incoming().status == 'pending' && incoming().createdAt == request.time && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(requestId) && isValidMovieRequest(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt'])
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(requestId);
+    }
+
+    match /pages/{pageId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(pageId) && isValidPage(incoming()) && incoming().keys().size() == 3 && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(pageId) && isValidPage(incoming())
+        && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'content', 'updatedAt'])
+        && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(pageId);
+    }
+
+    match /settings/{settingId} {
+      allow read: if true;
+      allow create: if isAdmin() && isValidId(settingId) && (
+        (settingId == 'adBanner' && isValidAdBanner(incoming()) && (incoming().keys().size() == 4 || incoming().keys().size() == 5)) ||
+        (settingId == 'site' && isValidSiteSettings(incoming()) && (incoming().keys().size() >= 2 && incoming().keys().size() <= 4))
+      ) && incoming().updatedAt == request.time;
+      allow update: if isAdmin() && isValidId(settingId) && (
+        (settingId == 'adBanner' && isValidAdBanner(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['content', 'posterUrl', 'isActive', 'timerSeconds', 'updatedAt'])) ||
+        (settingId == 'site' && isValidSiteSettings(incoming()) && incoming().diff(existing()).affectedKeys().hasOnly(['siteName', 'copyrightText', 'omdbApiKey', 'updatedAt']))
+      ) && incoming().updatedAt == request.time;
+      allow delete: if isAdmin() && isValidId(settingId);
+    }
+  }
+}

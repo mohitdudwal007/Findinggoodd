@@ -1,0 +1,111 @@
+{
+  "entities": {
+    "movie": {
+      "title": "Movie",
+      "description": "Represents a movie available for download on Findinggoodd.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "year": { "type": "string" },
+        "rating": { "type": "number" },
+        "poster": { "type": "string" },
+        "genre": { "type": "string" },
+        "size": { "type": "string" },
+        "downloadLink": { "type": "string", "description": "URL to download the movie" },
+        "watchLink": { "type": "string", "description": "URL for the movie iframe player" },
+        "isTrending": { "type": "boolean", "description": "Whether the movie is currently trending" },
+        "createdAt": { "type": "number", "description": "Timestamp" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["title", "year", "rating", "poster", "genre", "size", "createdAt", "updatedAt"]
+    },
+    "movieRequest": {
+      "title": "Movie Request",
+      "description": "Represents a user request for a movie.",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string", "enum": ["pending", "fulfilled", "rejected"] },
+        "createdAt": { "type": "number", "description": "Timestamp" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["title", "message", "status", "createdAt", "updatedAt"]
+    },
+    "page": {
+      "title": "Page",
+      "description": "Represents a generic site page (e.g. Terms & Conditions).",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "content": { "type": "string" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["title", "content", "updatedAt"]
+    },
+    "adBanner": {
+      "title": "Ad Banner",
+      "description": "Configuration for the ad banner.",
+      "type": "object",
+      "properties": {
+        "content": { "type": "string" },
+        "posterUrl": { "type": "string" },
+        "isActive": { "type": "boolean" },
+        "timerSeconds": { "type": "number" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["content", "isActive", "timerSeconds", "updatedAt"]
+    },
+    "siteSettings": {
+      "title": "Site Settings",
+      "description": "General site configuration.",
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string" },
+        "copyrightText": { "type": "string" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["siteName", "updatedAt"]
+    },
+    "analytics": {
+      "title": "Movie Analytics",
+      "description": "Represents viewing and downloading metrics for a movie.",
+      "type": "object",
+      "properties": {
+        "movieId": { "type": "string" },
+        "movieTitle": { "type": "string" },
+        "views": { "type": "number" },
+        "downloads": { "type": "number" },
+        "updatedAt": { "type": "number", "description": "Timestamp" }
+      },
+      "required": ["movieId", "movieTitle", "views", "downloads", "updatedAt"]
+    }
+  },
+  "firestore": {
+    "/analytics/{movieId}": {
+      "schema": { "$ref": "analytics" },
+      "description": "Stores viewing and downloading statistics per movie."
+    },
+    "/settings/{settingId}": {
+      "schema": {
+        "oneOf": [
+          { "$ref": "adBanner" },
+          { "$ref": "siteSettings" }
+        ]
+      },
+      "description": "Stores site settings like ad banners and general settings."
+    },
+    "/pages/{pageId}": {
+      "schema": { "$ref": "page" },
+      "description": "Stores site pages."
+    },
+    "/movies/{movieId}": {
+      "schema": { "$ref": "movie" },
+      "description": "Stores all movie records."
+    },
+    "/movieRequests/{requestId}": {
+      "schema": { "$ref": "movieRequest" },
+      "description": "Stores all user movie requests."
+    }
+  }
+}
