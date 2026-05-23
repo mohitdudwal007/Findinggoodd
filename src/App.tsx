@@ -47,6 +47,156 @@ const CursorGlow = () => {
   );
 };
 
+const LiveParticlesBackground = () => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const mouseRef = useRef({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      mouseRef.current = { x: e.clientX, y: e.clientY };
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = (canvas.width = window.innerWidth);
+    let height = (canvas.height = window.innerHeight);
+
+    const handleResize = () => {
+      if (!canvas) return;
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    };
+    window.addEventListener('resize', handleResize);
+
+    const colors = [
+      'rgba(66, 133, 244, alpha)',   // Google Blue
+      'rgba(234, 67, 53, alpha)',   // Google Red
+      'rgba(251, 188, 5, alpha)',   // Google Yellow
+      'rgba(52, 168, 83, alpha)',   // Google Green
+      'rgba(155, 114, 243, alpha)',  // Gemini Purple
+      'rgba(34, 211, 238, alpha)'    // Gemini Cyan
+    ];
+
+    interface Particle {
+      x: number;
+      y: number;
+      radius: number;
+      baseColor: string;
+      vx: number;
+      vy: number;
+      sinVal: number;
+      sinSpeed: number;
+      pulseSpeed: number;
+    }
+
+    const particles: Particle[] = [];
+    const particleCount = Math.min(40, Math.floor((width * height) / 32000));
+
+    for (let i = 0; i < particleCount; i++) {
+      const colorTemplate = colors[Math.floor(Math.random() * colors.length)];
+      particles.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        radius: Math.random() * 3.5 + 1.2,
+        baseColor: colorTemplate,
+        vx: (Math.random() - 0.5) * 0.4,
+        vy: (Math.random() - 0.5) * 0.4,
+        sinVal: Math.random() * Math.PI * 2,
+        sinSpeed: Math.random() * 0.01 + 0.005,
+        pulseSpeed: Math.random() * 0.02 + 0.01,
+      });
+    }
+
+    const draw = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      particles.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.sinVal += p.sinSpeed;
+
+        p.x += Math.sin(p.sinVal) * 0.12;
+
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        const dx = mouseRef.current.x - p.x;
+        const dy = mouseRef.current.y - p.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < 220) {
+          const force = (220 - dist) / 220;
+          p.x -= dx * force * 0.02;
+          p.y -= dy * force * 0.02;
+        }
+
+        const opacity = 0.14 + Math.sin(p.sinVal * 0.8) * 0.08;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.baseColor.replace('alpha', opacity.toFixed(3));
+        ctx.fill();
+
+        if (p.radius > 2.8) {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.radius * 2.5, 0, Math.PI * 2);
+          ctx.fillStyle = p.baseColor.replace('alpha', (opacity * 0.25).toFixed(3));
+          ctx.fill();
+        }
+      });
+
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const pi = particles[i];
+          const pj = particles[j];
+          const dx = pi.x - pj.x;
+          const dy = pi.y - pj.y;
+          const dist = Math.hypot(dx, dy);
+
+          if (dist < 110) {
+            const alpha = ((110 - dist) / 110) * 0.05;
+            ctx.beginPath();
+            ctx.moveTo(pi.x, pi.y);
+            ctx.lineTo(pj.x, pj.y);
+            const grad = ctx.createLinearGradient(pi.x, pi.y, pj.x, pj.y);
+            grad.addColorStop(0, pi.baseColor.replace('alpha', alpha.toFixed(3)));
+            grad.addColorStop(1, pj.baseColor.replace('alpha', alpha.toFixed(3)));
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 0.8;
+            ctx.stroke();
+          }
+        }
+      }
+
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      className="fixed inset-0 pointer-events-none z-[1] bg-transparent w-full h-full"
+    />
+  );
+};
+
 enum OperationType {
   CREATE = 'create',
   UPDATE = 'update',
@@ -224,13 +374,24 @@ const Navbar = ({
     >
       <div 
         onClick={handleBrandClick}
-        className={`text-xl md:text-2xl font-display font-black tracking-tighter uppercase transition-all duration-300 cursor-pointer select-none ${isSearchOpen ? 'opacity-0 hidden md:flex' : 'opacity-100 flex'} items-center gap-2.5 relative group`}
+        className={`text-xl md:text-2xl font-display font-black tracking-tighter uppercase transition-all duration-300 cursor-pointer select-none ${isSearchOpen ? 'opacity-0 hidden md:flex' : 'opacity-100 flex'} items-center gap-2 relative group`}
       >
-        <span className="text-gradient-gemini drop-shadow-[0_0_20px_rgba(155,114,243,0.35)] font-extrabold">{siteName}</span>
-        <span className="flex h-2 w-2 relative -top-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-gradient-to-r from-cyan-400 to-indigo-500"></span>
-        </span>
+        {/* Beautiful Gemini Sparkle Emblem */}
+        <div className="relative shrink-0 w-6 h-6 flex items-center justify-center animate-pulse">
+          <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C12 2 13.5 8 16.5 9.5C19.5 11 22 11 22 11C22 11 19.5 11 16.5 12.5C13.5 14 12 20 12 20C12 20 10.5 14 7.5 12.5C4.5 11 2 11 2 11C2 11 4.5 11 7.5 9.5C10.5 8 12 2 12 2Z" fill="url(#geminiNavBarSparkGradient)" />
+            <defs>
+              <linearGradient id="geminiNavBarSparkGradient" x1="2" y1="2" x2="22" y2="20" gradientUnits="userSpaceOnUse">
+                <stop offset="0%" stopColor="#4285F4" />
+                <stop offset="35%" stopColor="#9B72F3" />
+                <stop offset="70%" stopColor="#D96570" />
+                <stop offset="100%" stopColor="#F59E0B" />
+              </linearGradient>
+            </defs>
+          </svg>
+          <span className="animate-ping absolute inset-0 rounded-full bg-indigo-500/10 -z-10 scale-150-delayed"></span>
+        </div>
+        <span className="text-gradient-gemini drop-shadow-[0_0_20px_rgba(155,114,243,0.35)] font-extrabold tracking-tight">{siteName}</span>
       </div>
       
       <div className="flex-1 flex justify-end">
@@ -1615,6 +1776,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#050505] text-[#e0e0e0] font-sans overflow-x-hidden relative selection:bg-white selection:text-black">
       <CursorGlow />
+      <LiveParticlesBackground />
       <div className="fixed inset-0 pointer-events-none bg-noise opacity-[0.03] z-[100] mix-blend-overlay"></div>
       <Navbar 
         searchQuery={searchQuery} 
