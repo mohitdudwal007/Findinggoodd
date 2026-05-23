@@ -270,46 +270,50 @@ const Hero: React.FC<HeroProps> = ({ onExploreClick, featuredMovie, onWatchMovie
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.4, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full max-w-[360px] bg-[#0c0e14]/50 border border-white/10 rounded-[2.5rem] p-6 shadow-2xl relative group overflow-hidden"
+              className="w-full max-w-[360px] bg-[#0d0e15]/60 border border-white/10 hover:border-[#9B72F3]/45 rounded-[2.5rem] p-6 shadow-[0_20px_50px_rgba(0,0,0,0.7)] relative group overflow-hidden transition-all duration-500 hover:-translate-y-2"
             >
-              <div className="absolute inset-0 bg-gradient-to-b from-indigo-500/5 to-transparent z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              {/* Symmetrical Neon Highlight Underline */}
+              <span className="absolute inset-x-0 bottom-0 h-[4px] bg-gradient-to-r from-[#4285F4] via-[#9B72F3] to-[#EA4335] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20"></span>
+
+              <div className="absolute inset-0 bg-gradient-to-b from-[#9B72F3]/10 to-transparent z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
               
-              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-5 border border-white/5">
+              <div className="relative aspect-[4/5] rounded-[2rem] overflow-hidden mb-5 border border-white/5 shadow-inner">
                 <img 
                   src={featuredMovie.poster} 
                   alt={featuredMovie.title} 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700"
+                  className="w-full h-full object-cover group-hover:scale-108 transition-all duration-1000 ease-[0.16,1,0.3,1]"
                   referrerPolicy="no-referrer"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
                 
                 {/* Micro-rating Badge */}
-                <span className="absolute top-4 right-4 bg-black/40 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded-full text-amber-400 font-display font-bold text-xs flex items-center gap-1">
-                  ★ {featuredMovie.rating}
+                <span className="absolute top-4 right-4 bg-black/60 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded-full text-amber-400 font-sans font-black text-xs flex items-center gap-1.5 shadow-lg">
+                  <Star size={11} fill="currentColor" className="text-amber-400 animate-pulse" />
+                  <span>{featuredMovie.rating}</span>
                 </span>
 
-                <span className="absolute bottom-4 left-4 bg-indigo-500/20 backdrop-blur-md border border-indigo-500/30 text-white font-mono uppercase tracking-widest text-[8px] px-2.5 py-1 rounded-full">
+                <span className="absolute bottom-4 left-4 bg-[#9B72F3]/25 backdrop-blur-md border border-[#9B72F3]/30 text-white font-sans font-extrabold uppercase tracking-widest text-[9px] px-3 py-1.5 rounded-full shadow-md animate-pulse">
                   ⚡ TOP RELEASE
                 </span>
 
                 {/* Instant center play circle */}
                 <button 
                   onClick={() => onWatchMovie(featuredMovie)}
-                  className="absolute inset-0 m-auto w-14 h-14 bg-white/15 backdrop-blur-md border border-white/30 text-white rounded-full flex items-center justify-center hover:scale-110 active:scale-95 transition-all cursor-pointer opacity-0 group-hover:opacity-100"
+                  className="absolute inset-0 m-auto w-15 h-15 bg-white/10 backdrop-blur-md border border-white/25 text-white rounded-full flex items-center justify-center hover:scale-110 hover:bg-white hover:text-black hover:border-white transition-all duration-300 shadow-2xl cursor-pointer"
                 >
-                  <Play size={18} fill="currentColor" className="ml-1" />
+                  <Play size={20} fill="currentColor" className="ml-1" />
                 </button>
               </div>
 
               <div className="flex flex-col relative z-10 px-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-1">{featuredMovie.genre}</span>
-                <h4 className="text-lg font-display font-black text-white uppercase leading-tight line-clamp-1 mb-3 group-hover:text-[#4285F4] transition-colors">{featuredMovie.title}</h4>
+                <span className="text-[10px] font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-[#4285F4] to-[#9B72F3] mb-1.5">{featuredMovie.genre}</span>
+                <h4 className="text-xl font-display font-black text-white uppercase leading-tight line-clamp-1 mb-4 group-hover:text-[#4285F4] transition-colors">{featuredMovie.title}</h4>
                 
-                <div className="flex items-center justify-between text-[10px] font-semibold text-white/40 uppercase tracking-widest border-t border-white/[0.05] pt-4 mt-1">
-                  <span>File Size: <strong className="text-white font-mono ml-1">{featuredMovie.size}</strong></span>
+                <div className="flex items-center justify-between text-[10px] font-black text-white/40 uppercase tracking-widest border-t border-white/[0.05] pt-5 mt-1">
+                  <span>File: <strong className="text-white font-mono ml-1.5 bg-white/[0.04] px-2.5 py-1 rounded-sm border border-white/5">{featuredMovie.size}</strong></span>
                   <div className="flex gap-2">
-                    <button onClick={() => onWatchMovie(featuredMovie)} className="px-3 py-1 bg-[#4285F4]/10 text-[#4285F4] rounded-full hover:bg-[#4285F4]/20 border border-[#4285F4]/20 font-bold tracking-widest">WATCH</button>
-                    <button onClick={() => onDownloadMovie(featuredMovie)} className="px-3 py-1 bg-white text-black rounded-full hover:bg-slate-200 border border-white font-bold tracking-widest">GET</button>
+                    <button onClick={() => onWatchMovie(featuredMovie)} className="px-3.5 py-2 bg-[#4285F4]/10 text-[#4285F4] hover:bg-[#4285F4]/20 border border-[#4285F4]/20 rounded-full font-black tracking-widest text-[9px] cursor-pointer transition-colors">WATCH</button>
+                    <button onClick={() => onDownloadMovie(featuredMovie)} className="px-3.5 py-2 bg-white text-black hover:bg-slate-200 border border-white rounded-full font-black tracking-widest text-[9px] cursor-pointer transition-transform duration-300 hover:scale-102">GET</button>
                   </div>
                 </div>
               </div>
@@ -1565,29 +1569,44 @@ const MovieCard: React.FC<{
 }> = React.memo(({ movie, index, onDownloadClick, onWatchClick }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
+  // Derive high fidelity specifications dynamically
+  const isUHD = movie.size.toLowerCase().includes('gb') && parseFloat(movie.size) > 3.5;
+  const qualityTag = isUHD ? "4K UHD" : "1085p FHD";
+
   return (
     <motion.div
-      initial={{ opacity: 0, y: 30 }}
+      initial={{ opacity: 0, y: 35 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-40px" }}
-      transition={{ duration: 0.7, delay: Math.min(index * 0.05, 0.35), ease: [0.16, 1, 0.3, 1] }}
-      className="group relative overflow-hidden bg-[#07080d]/80 border border-white/[0.06] hover:border-[#9B72F3]/40 rounded-[2rem] flex flex-col shadow-lg transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_16px_40px_rgba(155,114,243,0.12)]"
+      transition={{ duration: 0.8, delay: Math.min(index * 0.05, 0.3), ease: [0.16, 1, 0.3, 1] }}
+      className="group relative flex flex-col w-full bg-[#0d0e15]/40 hover:bg-[#11131e]/70 border border-white/[0.05] hover:border-indigo-500/35 rounded-[1.8rem] sm:rounded-[2.2rem] overflow-hidden transition-all duration-500 ease-[0.16,1,0.3,1] hover:-translate-y-2.5 shadow-[0_12px_36px_rgba(0,0,0,0.65)] hover:shadow-[0_25px_60px_-15px_rgba(139,92,246,0.38)]"
     >
-      {/* Glow highlight bounds */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#9B72F3]/0 to-[#9B72F3]/12 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none z-20"></div>
+      {/* Top Left Hot/Trending Badge */}
+      {movie.isTrending && (
+        <span className="absolute top-4 left-4 z-20 bg-gradient-to-r from-[#EA4335] via-[#ea5f35] to-[#FBBC05] text-white font-sans font-black tracking-widest text-[8px] sm:text-[9px] px-3 py-1.5 rounded-full shadow-[0_4px_14px_rgba(234,67,53,0.4)] animate-pulse">
+          🔥 TRENDING
+        </span>
+      )}
 
-      <div className="aspect-[2/3] bg-[#040508] relative overflow-hidden">
-        {/* Placeholder blur */}
+      {/* Glossy Symmetrical Neon Highlight Underline */}
+      <span className="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-[#4285F4] via-[#9B72F3] to-[#EA4335] opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-20"></span>
+
+      {/* Floating Dynamic Shadow Backglow */}
+      <span className="absolute -inset-4 bg-gradient-to-r from-violet-600/10 to-blue-600/10 blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none -z-10"></span>
+
+      {/* Cover Image Wrapper with aspect-[11/16] */}
+      <div className="aspect-[11/16] w-full bg-[#040508] relative overflow-hidden">
+        {/* Ambient Underlay Blur for premium glow */}
         <img 
           src={movie.poster} 
-          alt=""
-          className={`absolute inset-0 w-full h-full object-cover blur-2xl opacity-15 scale-110 pointer-events-none transition-all duration-700 z-0 ${imageLoaded ? 'opacity-[0.05]' : 'opacity-[0.20]'}`}
+          alt="" 
+          className="absolute inset-0 w-full h-full object-cover blur-3xl opacity-20 scale-110 pointer-events-none"
           referrerPolicy="no-referrer"
         />
 
-        {/* Shimmer loading bounds */}
+        {/* High-Fidelity Shimmer loader */}
         {!imageLoaded && (
-          <div className="absolute inset-0 z-15 overflow-hidden">
+          <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/[0.01]">
             <div className="w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-shimmer"></div>
           </div>
         )}
@@ -1599,70 +1618,80 @@ const MovieCard: React.FC<{
           decoding="async"
           referrerPolicy="no-referrer"
           onLoad={() => setImageLoaded(true)}
-          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 z-0 group-hover:scale-106 ${
-            imageLoaded ? 'opacity-10 w-full blur-0 scale-100 opacity-100' : 'opacity-0 scale-102 blur-sm'
+          className={`absolute inset-0 w-full h-full object-cover transition-all duration-1000 ease-[0.16,1,0.3,1] group-hover:scale-110 ${
+            imageLoaded ? 'opacity-100 scale-100 blur-0' : 'opacity-0 scale-102 blur-sm'
           }`}
         />
 
-        {/* Vignette styling shadow gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#07080d] via-transparent to-transparent z-10"></div>
-        
-        {/* Play trigger overlay on hover overlay */}
-        <div className="absolute inset-0 bg-[#040508]/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-15"></div>
+        {/* Dual Cinematic Vignette Gradients */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0e15] via-transparent to-black/40 z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0d0e15]/25 via-transparent to-[#0d0e15]/25 z-10"></div>
 
-        {/* Floating rating top bar badge */}
-        <div className="absolute top-4 right-4 z-20 bg-black/40 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded-full text-amber-400 font-display font-medium text-[11px] flex items-center gap-1 shadow-md">
-          <Star size={11} fill="currentColor" />
-          <span className="text-white text-xs font-bold leading-none">{movie.rating}</span>
+        {/* Floating Star Glass Rating badge */}
+        <div className="absolute top-4 right-4 z-20 bg-[#040508]/60 backdrop-blur-md px-3 py-1.5 border border-white/10 rounded-full text-amber-400 font-sans font-black text-[11px] flex items-center gap-1.5 shadow-[0_4px_12px_rgba(0,0,0,0.5)]">
+          <Star size={11} fill="currentColor" className="text-amber-400 rotate-[15deg] group-hover:rotate-0 transition-transform duration-500" />
+          <span className="text-white text-xs font-black leading-none">{movie.rating}</span>
         </div>
 
+        {/* Play Action Hover overlay Trigger */}
         {movie.watchLink && (
-          <button 
-            onClick={() => onWatchClick(movie)}
-            className="absolute inset-0 m-auto w-12 h-12 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-0 scale-95 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300 z-30 cursor-pointer shadow-lg"
-          >
-            <Play size={16} fill="currentColor" className="ml-0.5" />
-          </button>
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 z-20">
+            <button 
+              onClick={() => onWatchClick(movie)}
+              className="w-13 h-13 rounded-full bg-white/10 backdrop-blur-md border border-white/25 text-white flex items-center justify-center transform scale-90 group-hover:scale-100 transition-all duration-300 ease-[0.16,1,0.3,1] hover:bg-white hover:text-black hover:scale-110 shadow-[0_8px_32px_rgba(0,0,0,0.4)] cursor-pointer"
+            >
+              <Play size={18} fill="currentColor" className="ml-0.5" />
+            </button>
+          </div>
         )}
       </div>
 
-      {/* Details Box Area */}
-      <div className="p-5 flex flex-col flex-1 relative z-10 bg-gradient-to-b from-[#07080d] to-[#040508]">
-        <h3 className="text-sm font-display font-black text-white uppercase tracking-tight line-clamp-1 group-hover:text-[#4285F4] transition-colors mb-1">
+      {/* Dynamic Spec/Data presentation row */}
+      <div className="p-4 sm:p-5 flex flex-col flex-1 relative z-10 bg-gradient-to-b from-[#11131e]/80 to-[#08090d]/100">
+        <h3 className="text-sm sm:text-base font-display font-black text-white uppercase tracking-tight line-clamp-1 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-[#4285F4] group-hover:to-[#9B72F3] transition-colors duration-300 mb-1">
           {movie.title}
         </h3>
-        <span className="text-[9px] text-slate-400 font-black tracking-widest uppercase mb-4">
-          {movie.year} <span className="mx-1">•</span> {(movie.genre || '').split(',')[0]}
-        </span>
+        
+        <div className="flex items-center gap-2 mb-4 text-[10px] text-slate-400/80 font-bold uppercase tracking-wider">
+          <span>{movie.year}</span>
+          <span className="w-1 h-1 bg-white/10 rounded-full"></span>
+          <span className="truncate">{(movie.genre || '').split(',').slice(0, 2).join(', ')}</span>
+        </div>
 
-        <div className="mt-auto flex flex-col gap-3 pt-3 border-t border-white/[0.04]">
-          <div className="flex items-center justify-between">
-            <span className="text-[8px] font-mono font-black text-slate-400 bg-white/[0.03] border border-white/5 px-2 py-0.5 rounded-sm uppercase tracking-widest shrink-0">{movie.size}</span>
-            <span className="text-[8px] tracking-widest font-black uppercase text-indigo-400 shrink-0">🔊 Dual Audio</span>
-          </div>
+        {/* High Tech Speccing Badges Row */}
+        <div className="flex items-center justify-between gap-1.5 mb-4 border-t border-white/[0.04] pt-4 mt-auto">
+          <span className="text-[9px] font-mono font-black text-[#9B72F3] bg-[#9B72F3]/8 border border-[#9B72F3]/15 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">
+            {qualityTag}
+          </span>
+          <span className="text-[9px] font-mono font-black text-[#4285F4] bg-[#4285F4]/8 border border-[#4285F4]/15 px-2.5 py-1 rounded-full uppercase tracking-widest shrink-0">
+            {movie.size}
+          </span>
+        </div>
 
-          <div className="flex gap-2">
-            {movie.watchLink && (
-              <button 
-                onClick={() => onWatchClick(movie)}
-                className="flex-1 bg-gradient-to-r from-[#4285F4]/10 to-[#9B72F3]/10 border border-[#4285F4]/15 text-white hover:border-[#4285F4]/30 py-2.5 rounded-full text-[9px] tracking-widest font-black uppercase flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all"
-              >
-                <MonitorPlay size={11} /> Watch
-              </button>
-            )}
-            {movie.downloadLink && (
-              <button 
-                onClick={() => onDownloadClick(movie)}
-                className={`flex-1 py-2.5 rounded-full text-[9px] tracking-widest font-black uppercase flex items-center justify-center gap-1 cursor-pointer active:scale-95 transition-all ${
-                  movie.watchLink 
-                    ? 'bg-white/[0.03] hover:bg-white/[0.06] text-slate-300 border border-white/10 hover:border-white/20' 
-                    : 'bg-white hover:bg-slate-200 text-black shadow-md'
-                }`}
-              >
-                <Download size={11} /> Get
-              </button>
-            )}
-          </div>
+        {/* Dual Actions Portal area (Watch and Save triggers) */}
+        <div className="flex gap-2">
+          {movie.watchLink && (
+            <button 
+              onClick={() => onWatchClick(movie)}
+              className="flex-1 bg-white/[0.02] hover:bg-gradient-to-r hover:from-[#4285F4]/15 hover:to-[#9B72F3]/15 border border-white/10 hover:border-indigo-500/30 text-white/90 hover:text-white py-2.5 rounded-full text-[10px] tracking-widest font-black uppercase flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-300"
+            >
+              <MonitorPlay size={12} className="text-blue-400" />
+              <span>Watch</span>
+            </button>
+          )}
+          {movie.downloadLink && (
+            <button 
+              onClick={() => onDownloadClick(movie)}
+              className={`flex-1 py-2.5 rounded-full text-[10px] tracking-widest font-black uppercase flex items-center justify-center gap-1.5 cursor-pointer active:scale-95 transition-all duration-300 ${
+                movie.watchLink 
+                  ? 'bg-gradient-to-b from-white to-slate-200 text-black hover:from-white hover:to-white shadow-[0_4px_12px_rgba(255,255,255,0.08)] hover:shadow-[0_4px_20px_rgba(255,255,255,0.2)]' 
+                  : 'bg-gradient-to-r from-[#4285F4] to-[#9B72F3] hover:scale-102 text-white shadow-[0_4px_12px_rgba(155,114,243,0.25)] hover:shadow-[0_4px_20px_rgba(155,114,243,0.4)] border border-white/10'
+              }`}
+            >
+              <Download size={12} />
+              <span>Get</span>
+            </button>
+          )}
         </div>
       </div>
     </motion.div>
@@ -1908,7 +1937,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 sm:gap-8">
               {displayMovies.filter(m => m.isTrending).map((movie, idx) => (
                 <MovieCard 
                   key={`trending-${movie.id}`} 
@@ -1964,7 +1993,7 @@ export default function App() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 sm:gap-8">
             {isLoadingMovies ? (
               // Spectacular loading skeleton match for high-fidelity loaders
               Array.from({ length: 10 }).map((_, i) => (
