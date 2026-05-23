@@ -1,37 +1,33 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
   <defs>
-    <!-- Gold Gradient -->
-    <linearGradient id="gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FFE259" />
-      <stop offset="50%" stop-color="#FFA751" />
-      <stop offset="100%" stop-color="#FF512F" />
+    <!-- Google Gemini Gradient Duo -->
+    <linearGradient id="gemini-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4285F4" />
+      <stop offset="35%" stop-color="#9B72F3" />
+      <stop offset="70%" stop-color="#EA4335" />
+      <stop offset="100%" stop-color="#FBBC05" />
     </linearGradient>
-    
-    <!-- Outer Rim Glow -->
-    <filter id="gold-glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
+
+    <!-- Deep Blue Cyber Sparkle Glow -->
+    <filter id="cyber-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
       <feComposite in="SourceGraphic" in2="blur" operator="over" />
     </filter>
   </defs>
 
-  <!-- Deep Velvet Slate Background -->
-  <rect width="512" height="512" rx="140" fill="#0c0c0e" stroke="url(#gold-grad)" stroke-width="6" />
+  <!-- Google Cloud Style Rounded Hexagonal Shield Background -->
+  <rect width="512" height="512" rx="145" fill="#07080d" stroke="url(#gemini-grad)" stroke-width="5" />
 
-  <!-- Film Reel Inner Core -->
-  <circle cx="256" cy="256" r="210" fill="none" stroke="rgba(255,215,0,0.08)" stroke-width="24" />
-  
-  <!-- Outer Film Reel Dots -->
-  <circle cx="256" cy="256" r="185" fill="none" stroke="url(#gold-grad)" stroke-width="10" stroke-dasharray="24 16" filter="url(#gold-glow)" />
+  <!-- Outer Interstellar Cyber Orbit Rings (Symmetric Cinema Lens) -->
+  <circle cx="256" cy="256" r="205" fill="none" stroke="rgba(155, 114, 243, 0.08)" stroke-width="16" />
+  <circle cx="256" cy="256" r="175" fill="none" stroke="url(#gemini-grad)" stroke-width="6" stroke-dasharray="12 18" opacity="0.85" filter="url(#cyber-glow)" />
 
-  <!-- Center Master Emblem (F & Play Fusion) -->
-  <g transform="translate(120, 115)">
-    <!-- Stylized F that fuses a flag and modern search curve -->
-    <path d="M 60,30 L 60,250 C 60,255 65,260 70,260 L 80,260 C 85,260 90,255 90,250 L 90,160 L 170,160 C 178,160 185,152 185,142 C 185,132 178,124 170,124 L 90,124 L 90,86 L 200,86 C 208,86 215,78 215,68 C 215,58 208,50 200,50 L 90,50 L 90,30 C 90,20 82,12 72,12 C 62,12 60,18 60,30 Z" fill="url(#gold-grad)" />
+  <!-- Central Multi-Point Gemini Spark & Play Button Fusion -->
+  <g transform="translate(141, 141)">
+    <!-- Gorgeous 4-point Spark representation -->
+    <path d="M 115 15 C 115 15 125 80 160 95 C 195 110 215 110 215 110 C 215 110 195 110 160 125 C 125 140 115 205 115 205 C 115 205 105 140 70 125 C 35 110 15 110 15 110 C 15 110 35 110 70 95 C 105 80 115 15 115 15 Z" fill="url(#gemini-grad)" filter="url(#cyber-glow)" />
     
-    <!-- Dynamic Cinema Search Arch / Viewing Lens -->
-    <path d="M 120,20 C 195,20 250,75 250,150 C 250,225 185,270 120,270" fill="none" stroke="url(#gold-grad)" stroke-width="16" stroke-linecap="round" opacity="0.85" />
-    
-    <!-- Central White Play Icon for Stream/Download identification -->
-    <path d="M 125,108 L 125,140 L 150,124 Z" fill="#ffffff" />
+    <!-- Central Pure White Play Emblem indicating Movie Streams -->
+    <path d="M 103 94 L 103 126 L 129 110 Z" fill="#ffffff" />
   </g>
 </svg>
