@@ -610,6 +610,8 @@ interface AdminDashboardProps {
   siteName: string;
   copyrightText: string;
   omdbApiKey: string;
+  initialEditingMovie?: Movie | null;
+  clearInitialEditingMovie?: () => void;
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({
@@ -621,6 +623,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
   siteName,
   copyrightText,
   omdbApiKey,
+  initialEditingMovie,
+  clearInitialEditingMovie,
 }) => {
   const [newMovie, setNewMovie] = useState({
     title: '', year: '', rating: '', poster: '', genre: '', size: '', downloadLink: '', watchLink: '', isTrending: false
@@ -645,6 +649,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
     setAdminCopyrightText(copyrightText || '');
     setAdminOmdbApiKey(omdbApiKey || '');
   }, [siteName, copyrightText, omdbApiKey]);
+
+  // Handle direct movie edit from card triggers
+  useEffect(() => {
+    if (initialEditingMovie) {
+      handleEdit(initialEditingMovie);
+      if (clearInitialEditingMovie) {
+        clearInitialEditingMovie();
+      }
+    }
+  }, [initialEditingMovie, clearInitialEditingMovie]);
 
   // Real-time tab data fetching
   useEffect(() => {
@@ -921,7 +935,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
           
           {/* Form Side */}
           <div className="lg:col-span-5">
-            <div className="bg-[#0b0c13]/90 border border-white/[0.08] p-8 rounded-[2rem] shadow-xl lg:sticky lg:top-36 backdrop-blur-3xl overflow-hidden relative">
+            <div id="admin-form-container" className="bg-[#0b0c13]/90 border border-white/[0.08] p-8 rounded-[2rem] shadow-xl lg:sticky lg:top-36 backdrop-blur-3xl overflow-hidden relative">
               <div className="absolute top-0 left-0 w-1.5 h-16 bg-gradient-to-b from-[#4285F4] to-[#9B72F3]"></div>
               
               <h3 className="text-sm font-display font-black uppercase tracking-widest text-white mb-6 border-b border-white/[0.06] pb-4 flex items-center gap-2">
@@ -1099,6 +1113,74 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({
                   </motion.div>
                 ))}
               </AnimatePresence>
+              {movies.length === 0 && (
+                <div className="py-12 px-6 text-center border border-dashed border-white/10 rounded-[2rem] flex flex-col items-center justify-center gap-4 bg-white/[0.01]">
+                  <Film size={28} className="text-white/20 animate-pulse" />
+                  <div className="max-w-md">
+                    <h4 className="text-sm font-display font-black uppercase text-white tracking-wider mb-1">Live Catalog is Empty</h4>
+                    <p className="text-[11px] text-slate-400 uppercase tracking-wide leading-relaxed">
+                      Your Firestore movies collection currently contains zero entries. You can populate it with high-quality sample movies to get started, or add custom movies manually.
+                    </p>
+                  </div>
+                  <button
+                    onClick={async () => {
+                      if (!confirm("Populate Firestore with sample movies?")) return;
+                      try {
+                        const sampleMovies = [
+                          {
+                            title: 'ECHELON',
+                            year: '2024',
+                            rating: 8.9,
+                            poster: 'https://images.unsplash.com/photo-1536440136628-849c177e76a1?q=80&w=800&auto=format&fit=crop',
+                            genre: 'Sci-Fi',
+                            size: '4.2 GB',
+                            isTrending: true,
+                            downloadLink: 'https://github.com/mohitdudwal/Findinggoodd',
+                            watchLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+                          },
+                          {
+                            title: 'NIGHTRUN',
+                            year: '2025',
+                            rating: 7.5,
+                            poster: 'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?q=80&w=800&auto=format&fit=crop',
+                            genre: 'Action',
+                            size: '3.8 GB',
+                            isTrending: false,
+                            downloadLink: 'https://github.com/mohitdudwal/Findinggoodd',
+                            watchLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+                          },
+                          {
+                            title: 'VOID',
+                            year: '2023',
+                            rating: 9.2,
+                            poster: 'https://images.unsplash.com/photo-1535016120720-40c7467d5283?q=80&w=800&auto=format&fit=crop',
+                            genre: 'Thriller',
+                            size: '5.1 GB',
+                            isTrending: true,
+                            downloadLink: 'https://github.com/mohitdudwal/Findinggoodd',
+                            watchLink: 'https://www.youtube.com/embed/dQw4w9WgXcQ'
+                          }
+                        ];
+                        for (const m of sampleMovies) {
+                          const seedId = 'seed_' + m.title.toLowerCase();
+                          await setDoc(doc(db, 'movies', seedId), {
+                            ...m,
+                            rating: Number(m.rating),
+                            createdAt: serverTimestamp(),
+                            updatedAt: serverTimestamp()
+                          });
+                        }
+                        alert("Default catalog initialized successfully!");
+                      } catch (e: any) {
+                        alert("Failed to populate default catalog: " + e.message);
+                      }
+                    }}
+                    className="px-6 py-3 bg-gradient-to-r from-[#4285F4] to-[#9B72F3] text-white font-extrabold uppercase text-[9.5px] tracking-widest rounded-full cursor-pointer hover:shadow-[0_4px_20px_rgba(155,114,243,0.3)] active:scale-95 transition-all flex items-center gap-2"
+                  >
+                    🚀 Populate Sample Catalog
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -1565,8 +1647,11 @@ const MovieCard: React.FC<{
   movie: Movie, 
   index: number, 
   onDownloadClick: (movie: Movie) => void, 
-  onWatchClick: (movie: Movie) => void 
-}> = React.memo(({ movie, index, onDownloadClick, onWatchClick }) => {
+  onWatchClick: (movie: Movie) => void,
+  isAdmin?: boolean,
+  onDeleteClick?: (id: string | number) => void,
+  onEditClick?: (movie: Movie) => void
+}> = React.memo(({ movie, index, onDownloadClick, onWatchClick, isAdmin, onDeleteClick, onEditClick }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   // Derive high fidelity specifications dynamically
@@ -1693,6 +1778,38 @@ const MovieCard: React.FC<{
             </button>
           )}
         </div>
+
+        {/* Direct Admin Operations */}
+        {isAdmin && (
+          <div className="flex gap-2 mt-4 pt-3.5 border-t border-dashed border-red-500/20 bg-red-500/5 -mx-4 -mb-4 px-4 py-3 rounded-b-[1.8rem] sm:rounded-b-[2.2rem] items-center justify-between relative z-20">
+            <span className="text-[8px] font-sans font-black text-red-400 uppercase tracking-widest flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 bg-red-400 rounded-full animate-pulse"></span>
+              Admin Actions
+            </span>
+            <div className="flex gap-1.5">
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onEditClick && onEditClick(movie);
+                }}
+                className="px-3.5 py-1.5 rounded-full bg-blue-500/20 hover:bg-blue-500 hover:text-white border border-blue-500/20 text-blue-400 text-[9px] tracking-widest font-black uppercase transition-all duration-300 cursor-pointer active:scale-95"
+              >
+                Edit
+              </button>
+              <button 
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteClick && onDeleteClick(movie.id);
+                }}
+                className="px-3.5 py-1.5 rounded-full bg-red-500/20 hover:bg-red-500 hover:text-white border border-red-500/20 text-red-400 text-[9px] tracking-widest font-black uppercase transition-all duration-300 cursor-pointer active:scale-95"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </motion.div>
   );
@@ -1713,6 +1830,7 @@ export default function App() {
   const [siteName, setSiteName] = useState('Findinggoodd');
   const [copyrightText, setCopyrightText] = useState(`Copyright © ${new Date().getFullYear()} Findinggoodd`);
   const [omdbApiKey, setOmdbApiKey] = useState('');
+  const [initialEditingMovie, setInitialEditingMovie] = useState<Movie | null>(null);
   const [downloadingMovie, setDownloadingMovie] = useState<Movie | null>(null);
   const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<string>('All');
@@ -1850,6 +1968,23 @@ export default function App() {
     setShowAdmin(false);
   };
 
+  const handleDelete = async (id: string | number) => {
+    if (!confirm("Are you sure you want to permanently delete this movie release?")) return;
+    try {
+      await deleteDoc(doc(db, 'movies', id.toString()));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, 'movies');
+    }
+  };
+
+  const handleEditFromCard = (movie: Movie) => {
+    setInitialEditingMovie(movie);
+    setShowAdmin(true);
+    setTimeout(() => {
+      document.getElementById('admin-form-container')?.scrollIntoView({ behavior: 'smooth' });
+    }, 150);
+  };
+
   // Processing filters
   const filteredMovies = displayMovies.filter(movie => {
     const q = searchQuery.toLowerCase();
@@ -1904,6 +2039,8 @@ export default function App() {
             siteName={siteName}
             copyrightText={copyrightText}
             omdbApiKey={omdbApiKey}
+            initialEditingMovie={initialEditingMovie}
+            clearInitialEditingMovie={() => setInitialEditingMovie(null)}
           />
         )}
       </AnimatePresence>
@@ -1956,6 +2093,9 @@ export default function App() {
                     setWatchingMovie(m);
                     trackAnalytics(m.id, m.title, 'views');
                   }}
+                  isAdmin={isAdminAuthenticated}
+                  onDeleteClick={handleDelete}
+                  onEditClick={handleEditFromCard}
                 />
               ))}
             </div>
@@ -2028,6 +2168,9 @@ export default function App() {
                     setWatchingMovie(m);
                     trackAnalytics(m.id, m.title, 'views');
                   }}
+                  isAdmin={isAdminAuthenticated}
+                  onDeleteClick={handleDelete}
+                  onEditClick={handleEditFromCard}
                 />
               ))
             ) : (
