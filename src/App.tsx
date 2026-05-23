@@ -163,18 +163,10 @@ const Navbar: React.FC<NavbarProps> = ({
       <div className="flex items-center gap-3">
         <button 
           onClick={onRequestClick} 
-          className="relative group overflow-hidden bg-gradient-to-r from-[#4285F4]/10 to-[#9B72F3]/10 border border-white/[0.08] hover:border-white/20 px-4 py-2 rounded-full text-[10px] md:text-xs font-bold uppercase tracking-widest text-white/90 cursor-pointer active:scale-95 transition-all flex items-center gap-1.5"
+          className="relative group overflow-hidden bg-gradient-to-r from-[#4285F4]/15 via-[#9B72F3]/10 to-[#EA4335]/15 border border-white/[0.08] hover:border-[#9B72F3]/30 px-5 py-2.5 rounded-full text-[10px] md:text-xs font-black uppercase tracking-widest text-white/90 cursor-pointer active:scale-95 transition-all duration-300 flex items-center gap-2 hover:shadow-[0_4px_15px_rgba(155,114,243,0.15)]"
         >
-          <span>✨ Movie Request</span>
-        </button>
-
-        {/* Small Admin Secret Trigger Visual indicator */}
-        <button 
-          onClick={handleBrandClick}
-          className="w-9 h-9 rounded-full bg-white/[0.02] border border-white/[0.08] flex items-center justify-center text-white/30 hover:text-white transition-colors cursor-pointer"
-          title="Secure Cloud Console Access"
-        >
-          <KeyRound size={14} />
+          <span className="w-1.5 h-1.5 bg-[#9B72F3] rounded-full animate-ping"></span>
+          <span>Request Movie</span>
         </button>
       </div>
     </motion.nav>
@@ -225,11 +217,11 @@ const Hero: React.FC<HeroProps> = ({ onExploreClick, featuredMovie, onWatchMovie
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl sm:text-6xl xl:text-[6.5rem] font-display font-black tracking-tight leading-[0.95] text-white mb-6 uppercase"
+            className="text-4xl sm:text-6xl xl:text-[5.5rem] font-display font-black tracking-tight leading-[0.95] text-white mb-6 uppercase"
           >
-            Sleek.<br />
-            <span className="italic font-light text-slate-300 font-sans mr-3 capitalize">Streamlined.</span>
-            <span className="text-gradient-gemini font-black block sm:inline">Infinite.</span>
+            Direct.<br />
+            <span className="italic font-light text-slate-300 font-sans mr-3 capitalize">High-Speed.</span>
+            <span className="text-gradient-gemini font-black block sm:inline">Cinema.</span>
           </motion.h1>
 
           <motion.p 
@@ -238,7 +230,7 @@ const Hero: React.FC<HeroProps> = ({ onExploreClick, featuredMovie, onWatchMovie
             transition={{ delay: 0.2, duration: 0.7 }}
             className="text-xs md:text-sm text-slate-300 font-medium tracking-wide uppercase leading-relaxed max-w-xl mb-10"
           >
-            Instant direct-access digital archive. Watch Bollywood, Hollywood, and series in ultra definition with Zero popups, zero noise. Crafting the ultimate interactive standard.
+            Your dynamic standalone digital catalog. Instantly watch and download high-definition releases without speed throttling, intrusive redirections, or visual noise. Premium curation at your fingertips.
           </motion.p>
 
           <motion.div 
@@ -1835,6 +1827,21 @@ export default function App() {
   const [watchingMovie, setWatchingMovie] = useState<Movie | null>(null);
   const [selectedGenre, setSelectedGenre] = useState<string>('All');
 
+  // Hidden admin trigger via footer copyright sequence
+  const footerClickCount = useRef(0);
+  const footerClickTimeout = useRef<NodeJS.Timeout | null>(null);
+  const handleFooterClick = () => {
+    footerClickCount.current += 1;
+    if (footerClickCount.current >= 3) {
+      setShowAdmin(true);
+      footerClickCount.current = 0;
+    }
+    if (footerClickTimeout.current) clearTimeout(footerClickTimeout.current);
+    footerClickTimeout.current = setTimeout(() => {
+      footerClickCount.current = 0;
+    }, 500);
+  };
+
   // Sync state constants with live fallback
   const INITIAL_MOVIES: Movie[] = [
     {
@@ -2195,7 +2202,13 @@ export default function App() {
         <footer className="border-t border-white/[0.04] mt-16 bg-gradient-to-b from-transparent to-black/30">
           <div className="px-6 md:px-16 xl:px-24 py-12 max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] tracking-widest uppercase font-black text-slate-400">
             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 text-center md:text-left">
-              <span className="text-white font-bold">{copyrightText}</span>
+              <span 
+                onClick={handleFooterClick}
+                className="text-white font-bold cursor-pointer select-none hover:text-slate-200 transition-colors"
+                title="System Archive Node"
+              >
+                {copyrightText}
+              </span>
               <button onClick={() => setShowTermsModal(true)} className="hover:text-white transition-colors cursor-pointer border-b border-transparent hover:border-white/20 pb-0.5">Privacy Policies</button>
             </div>
             
