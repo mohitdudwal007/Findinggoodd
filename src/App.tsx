@@ -96,7 +96,7 @@ const Navbar: React.FC<NavbarProps> = ({
       initial={{ y: -60, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="fixed top-4 left-4 right-4 z-50 max-w-7xl mx-auto border border-white/[0.08] bg-[#07080d]/65 backdrop-blur-3xl rounded-full py-3 px-6 md:px-10 flex items-center justify-between shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
+      className="fixed top-4 left-4 right-4 z-50 max-w-[1440px] mx-auto border border-white/[0.08] bg-[#07080d]/65 backdrop-blur-3xl rounded-full py-3 px-6 md:px-10 flex items-center justify-between shadow-[0_16px_40px_rgba(0,0,0,0.6)]"
     >
       <div 
         onClick={handleBrandClick}
@@ -182,7 +182,7 @@ interface HeroProps {
 
 const Hero: React.FC<HeroProps> = ({ onExploreClick }) => {
   return (
-    <section className="relative min-h-[80vh] flex items-center px-6 md:px-16 xl:px-24 pt-32 pb-24 overflow-hidden border-b border-white/[0.04]">
+    <section className="relative min-h-[80vh] flex items-center px-6 md:px-10 lg:px-16 pt-32 pb-24 overflow-hidden border-b border-white/[0.04]">
       {/* Dynamic Network Lines and Mesh */}
       <div className="absolute inset-0 bg-[#040508] z-0">
         <div className="absolute top-[-30%] left-[-10%] w-[65vw] h-[65vw] bg-radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#4285F4]/10 via-transparent to-transparent blur-[120px] opacity-45 animate-pulse-slow"></div>
@@ -1997,7 +1997,7 @@ export default function App() {
 
         {/* Dynamic Trending Row */}
         {displayMovies.some(m => m.isTrending) && (
-          <section className="px-6 md:px-16 xl:px-24 py-16 max-w-7xl mx-auto w-full">
+          <section className="px-6 md:px-10 lg:px-16 py-16 max-w-[1440px] mx-auto w-full">
             <div className="flex items-center gap-3 mb-8 border-b border-white/[0.04] pb-4">
               <span className="flex h-2.5 w-2.5 relative">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#EA4335] opacity-60"></span>
@@ -2008,7 +2008,7 @@ export default function App() {
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 sm:gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8">
               {displayMovies.filter(m => m.isTrending).map((movie, idx) => (
                 <MovieCard 
                   key={`trending-${movie.id}`} 
@@ -2037,7 +2037,7 @@ export default function App() {
         )}
 
         {/* Core Catalog Section */}
-        <section id="catalog-block" className="px-6 md:px-16 xl:px-24 py-16 max-w-7xl mx-auto w-full">
+        <section id="catalog-block" className="px-6 md:px-10 lg:px-16 py-16 max-w-[1440px] mx-auto w-full">
           <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-white/[0.04] pb-5 mb-8 gap-4">
             <h2 className="text-sm font-display font-black uppercase tracking-widest text-white flex items-center gap-2">
               <Compass size={16} className="text-[#4285F4] animate-spin-slow" />
@@ -2047,7 +2047,7 @@ export default function App() {
 
           {/* Symmetrical dynamic sliding filter indicator capsule */}
           {availableGenres.length > 1 && (
-            <div className="flex gap-2.5 pb-6 mb-4 overflow-x-auto scrollbar-none snap-x py-1.5">
+            <div className="flex gap-2.5 pb-6 mb-4 overflow-x-auto scrollbar-none snap-x py-1.5 md:justify-center">
               {availableGenres.map(genre => {
                 const isActive = selectedGenre === genre;
                 return (
@@ -2067,19 +2067,25 @@ export default function App() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-5 sm:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 sm:gap-8">
             {isLoadingMovies ? (
               // Spectacular loading skeleton match for high-fidelity loaders
               Array.from({ length: 10 }).map((_, i) => (
-                <div key={i} className="aspect-[2/3] bg-[#07080d]/80 animate-pulse relative overflow-hidden border border-white/[0.05] rounded-[2rem] flex flex-col justify-end p-5">
-                  <div className="absolute top-4 right-4 bg-white/5 w-12 h-6 rounded-full border border-white/5"></div>
-                  <div className="flex flex-col w-full space-y-3 relative pt-12">
-                     <div className="h-4 w-3/4 bg-white/[0.04] rounded-sm"></div>
-                     <div className="h-2.5 w-1/3 bg-white/[0.04] rounded-sm pb-1"></div>
-                     <div className="flex gap-2 w-full pt-2">
-                        <div className="flex-1 h-8 bg-white/[0.04] rounded-full"></div>
-                        <div className="flex-1 h-8 bg-white/[0.04] rounded-full"></div>
-                     </div>
+                <div key={i} className="group relative flex flex-col w-full bg-[#0d0e15]/40 border border-white/[0.05] rounded-[1.8rem] sm:rounded-[2.2rem] overflow-hidden animate-pulse">
+                  {/* Aspect cover ratio */}
+                  <div className="aspect-[11/16] w-full bg-[#040508]/65 relative"></div>
+                  {/* Text area */}
+                  <div className="p-4 sm:p-5 flex flex-col flex-1 gap-3.5 bg-gradient-to-b from-[#11131e]/80 to-[#08090d]/100">
+                    <div className="h-4 w-3/4 bg-white/[0.04] rounded-full"></div>
+                    <div className="h-2.5 w-1/3 bg-white/[0.03] rounded-full"></div>
+                    <div className="flex justify-between gap-1.5 border-t border-white/[0.04] pt-4 mt-auto">
+                      <div className="h-4.5 w-10 bg-white/[0.03] rounded-full"></div>
+                      <div className="h-4.5 w-10 bg-white/[0.03] rounded-full"></div>
+                    </div>
+                    <div className="flex gap-2 pt-2">
+                      <div className="flex-1 h-8 bg-white/[0.04] rounded-full"></div>
+                      <div className="flex-1 h-8 bg-white/[0.04] rounded-full"></div>
+                    </div>
                   </div>
                 </div>
               ))
@@ -2127,7 +2133,7 @@ export default function App() {
 
         {/* Minimal Footer */}
         <footer className="border-t border-white/[0.04] mt-16 bg-gradient-to-b from-transparent to-black/30">
-          <div className="px-6 md:px-16 xl:px-24 py-12 max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] tracking-widest uppercase font-black text-slate-400">
+          <div className="px-6 md:px-10 lg:px-16 py-12 max-w-[1440px] mx-auto w-full flex flex-col md:flex-row items-center justify-between gap-6 text-[10px] tracking-widest uppercase font-black text-slate-400">
             <div className="flex flex-col md:flex-row items-center gap-6 md:gap-10 text-center md:text-left">
               <span 
                 onClick={handleFooterClick}
